@@ -102,9 +102,10 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		public function do_plugin_install( $plugin = null ) {
 
 			$this->dependencies();
+			var_dump( $plugin );
 
 			$installer = new TM_Wizard_Plugin_Upgrader(
-				new Plugin_Installer_Skin(
+				new TM_Wizard_Plugin_Upgrader_Skin(
 					array(
 						'url'    => false,
 						'plugin' => $plugin['slug'],
@@ -132,6 +133,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 			}
 
+			require_once tm_wizard()->path( 'includes/class-tm-wizard-plugin-upgrader-skin.php' );
 			require_once tm_wizard()->path( 'includes/class-tm-wizard-plugin-upgrader.php' );
 		}
 
