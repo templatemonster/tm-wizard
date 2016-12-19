@@ -207,7 +207,9 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				return;
 			}
 
-			$settings = array();
+			$settings = array(
+				'redirect' => true,
+			);
 			$handle   = 'tm-wizard';
 
 			if ( $this->is_wizard( 2 ) ) {
@@ -220,13 +222,14 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 					? tm_wizard_data()->sanitize_type( $_GET['type'] )
 					: tm_wizard_data()->default_type();
 
-				$settings['firstPlugin'] = tm_wizard_data()->get_first_plugin_data( $skin, $type );
+				$settings['firstPlugin']  = tm_wizard_data()->get_first_plugin_data( $skin, $type );
+				$settings['totalPlugins'] = tm_wizard_data()->get_plugins_count( $skin, $type );
 			}
 
 			wp_enqueue_script( $handle, $this->url( 'assets/js/tm-wizard.js' ), array( 'wp-util' ), '20161214', true );
 			wp_enqueue_style( $handle, $this->url( 'assets/css/tm-wizard.css' ), false, '20161214' );
 
-			wp_localize_script( $handle, 'tmWizardSettings', $settings );
+			wp_localize_script( $handle, 'tmWizardSettings', apply_filters( 'tm_wizard_js_settings', $settings ) );
 		}
 
 		/**

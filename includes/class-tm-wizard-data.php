@@ -27,6 +27,13 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		private static $instance = null;
 
 		/**
+		 * Holder for plugins by skins list.
+		 *
+		 * @var array
+		 */
+		private $skin_plugins = array();
+
+		/**
 		 * Returns information about plugin.
 		 *
 		 * @param  string $plugin Plugin slug.
@@ -53,16 +60,21 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		 */
 		public function get_skin_plugins( $skin = null ) {
 
+			if ( ! empty( $this->skin_plugins[ $skin ] ) ) {
+				return $this->skin_plugins[ $skin ];
+			}
+
 			$skins = tm_wizard_settings()->get( array( 'skins' ) );
 			$base  = ! empty( $skins['base'] ) ? $skins['base'] : array();
 			$lite  = ! empty( $skins['advanced'][ $skin ]['lite'] ) ? $skins['advanced'][ $skin ]['lite'] : array();
 			$full  = ! empty( $skins['advanced'][ $skin ]['full'] ) ? $skins['advanced'][ $skin ]['full'] : array();
 
-			return array(
+			$this->skin_plugins[ $skin ] = array(
 				'lite' => array_merge( $base, $lite ),
 				'full' => array_merge( $base, $full ),
 			);
 
+			return $this->skin_plugins[ $skin ];
 		}
 
 		/**
@@ -160,7 +172,7 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		 * @param  string $type Installation type.
 		 * @return array
 		 */
-		public function get_first_plugin_data( $skin, $type ) {
+		public function get_first_plugin_data( $skin = null, $type = null ) {
 
 			$plugins         = tm_wizard_data()->get_first_skin_plugin();
 			$current         = $plugins[ $type ];
@@ -174,6 +186,18 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 			return isset( $registered[ $current ] )
 				? array_merge( $additional_data, $registered[ $current ] )
 				: array();
+		}
+
+		/**
+		 * Returns total plugins count required for installation.
+		 *
+		 * @param  string $skin Skin slug.
+		 * @param  string $type Installation type.
+		 * @return array
+		 */
+		public function get_plugins_count( $skin = null, $type = null ) {
+			$plugins = $this->get_skin_plugins( $skin );
+			return count( $plugins[ $type ] );
 		}
 
 		/**

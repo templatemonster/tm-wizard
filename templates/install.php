@@ -7,7 +7,7 @@
 
 <div class="tm-wizard-progress">
 	<div class="tm-wizard-progress__bar">
-		<div class="tm-wizard-progress__fill"></div>
+		<span class="tm-wizard-progress__label"><span></span></span>
 	</div>
 </div>
 

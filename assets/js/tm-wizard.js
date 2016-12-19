@@ -9,7 +9,8 @@
 			selectType: '[name="install-type"]',
 			popup: '.tm-wizard-popup',
 			closePopup: '.tm-wizard-popup__close',
-			plugins: '.tm-wizard-plugins'
+			plugins: '.tm-wizard-plugins',
+			progress: '.tm-wizard-progress__bar',
 		},
 
 		vars: {
@@ -19,12 +20,15 @@
 			skin: null,
 			plugins: null,
 			template: null,
-			progress: 0,
+			currProgress: 0,
+			progress: null
 		},
 
 		init: function() {
 
-			tmWizard.vars.popup = $( tmWizard.css.popup );
+			tmWizard.vars.popup    = $( tmWizard.css.popup );
+			tmWizard.vars.progress = $( tmWizard.css.progress );
+			tmWizard.vars.percent  = $( '.tm-wizard-progress__label', tmWizard.vars.progress );
 
 			$( document )
 				.on( 'click.tmWizard', tmWizard.css.runInstall, tmWizard.runInstall )
@@ -77,6 +81,25 @@
 
 		},
 
+		updateProgress: function() {
+
+			var val   = 0,
+				total = parseInt( settings.totalPlugins );
+
+			tmWizard.vars.currProgress++;
+
+			val = 100 * ( tmWizard.vars.currProgress / total );
+			val = Math.round( val );
+
+			if ( 100 < val ) {
+				val = 100;
+			}
+
+			tmWizard.vars.percent.html( val + '%' );
+			tmWizard.vars.progress.css( 'width', val + '%' );
+
+		},
+
 		installRequest: function( target, data ) {
 
 			$.ajax({
@@ -91,15 +114,26 @@
 				}
 			}).done( function( response ) {
 
-				tmWizard.vars.progress = tmWizard.vars.progress + 1;
+				tmWizard.updateProgress();
 
-				if ( true === response.success && true !== response.data.isLast ) {
+				if ( true !== response.success ) {
+					return;
+				}
+
+				if ( true !== response.data.isLast ) {
 					tmWizard.installPlugin( response.data );
+				} else {
+
+					$( document ).trigger( 'tm-wizard-install-finished' );
+
+					if ( true === settings.redirect ) {
+						window.location = response.data.redirect;
+					}
+
 				}
 
-				if ( true === response.success ) {
-					$( '.tm-wizard-loader', target ).replaceWith( '<span class="dashicons dashicons-yes"></span>' );
-				}
+				$( '.tm-wizard-loader', target ).replaceWith( '<span class="dashicons dashicons-yes"></span>' );
+
 			});
 		}
 	};

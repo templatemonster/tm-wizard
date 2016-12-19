@@ -128,4 +128,35 @@ class TM_Wizard_Plugin_Upgrader extends Plugin_Upgrader {
 		return $source;
 	}
 
+	/**
+	 * Grabs the plugin file from an installed plugin.
+	 *
+	 * @since 1.0.0
+	 */
+	public function plugin_info() {
+
+		var_dump( $this->result );
+
+		/** Return false if installation result isn't an array or the destination name isn't set */
+		if ( ! is_array( $this->result ) ) {
+			return false;
+		}
+
+		if ( empty( $this->result['destination_name'] ) ) {
+			return false;
+		}
+
+		/** Get the installed plugin file or return false if it isn't set */
+		$plugin = get_plugins( '/' . $this->result['destination_name'] );
+		if ( empty( $plugin ) ) {
+			return false;
+		}
+
+		/** Assume the requested plugin is the first in the list */
+		$pluginfiles = array_keys( $plugin );
+
+		return $this->result['destination_name'] . '/' . $pluginfiles[0];
+
+	}
+
 }

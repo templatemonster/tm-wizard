@@ -30,7 +30,7 @@ $fontSize:        15px;
 		margin: 0;
 		padding: 0 0 1.5em;
 		font-size: 20px;
-		line-height: 1.2em;
+		line-height: 1em;
 	}
 	.btn {
 		display: inline-block;
@@ -291,6 +291,84 @@ $fontSize:        15px;
 			position: relative;
 		}
 	}
+}
+
+.tm-wizard-progress {
+	height: 1.6em;
+	border-radius: 0.75em;
+	background: $innerBoxColor;
+	position: relative;
+	overflow: hidden;
+	min-width: 10em;
+	margin: 0 0 1.5em;
+	&__bar {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		background: $primaryColor;
+		span,
+		&:after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			background-image:
+			   -webkit-gradient(linear, 0 0, 100% 100%,
+			      color-stop(.25, rgba(255, 255, 255, .05)),
+			      color-stop(.25, transparent), color-stop(.5, transparent),
+			      color-stop(.5, rgba(255, 255, 255, .05)),
+			      color-stop(.75, rgba(255, 255, 255, .05)),
+			      color-stop(.75, transparent), to(transparent)
+			   );
+			background-image:
+				-moz-linear-gradient(
+				  -45deg,
+			      rgba(255, 255, 255, .05) 25%,
+			      transparent 25%,
+			      transparent 50%,
+			      rgba(255, 255, 255, .05) 50%,
+			      rgba(255, 255, 255, .05) 75%,
+			      transparent 75%,
+			      transparent
+			   );
+			z-index: 1;
+			-webkit-background-size: 50px 50px;
+			-moz-background-size: 50px 50px;
+			-webkit-animation: move 2.5s linear infinite;
+			overflow: hidden;
+		}
+	}
+	&__label {
+		content: attr( data-width );
+		color: #fff;
+		position: absolute;
+		width: 100%;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		line-height: 1.6em;
+		text-align: center;
+	}
+}
+
+@-webkit-keyframes move {
+	0% { background-position: 0 0; }
+	100% { background-position: 50px 50px; }
+}
+@-moz-keyframes move {
+	0% { background-position: 0 0; }
+	100% { background-position: 50px 50px; }
+}
+@-ms-keyframes move {
+	0% { background-position: 0 0; }
+	100% { background-position: 50px 50px; }
+}
+@keyframes move {
+	0% { background-position: 0 0; }
+	100% { background-position: 50px 50px; }
 }
 
 @keyframes spin {

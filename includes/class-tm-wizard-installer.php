@@ -96,7 +96,8 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			if ( ! $next ) {
 				wp_send_json_success( array(
 					'isLast'   => true,
-					'redirect' => apply_filters( 'tm_wizards_install_finish_redirect' ),
+					'message'  => esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' ),
+					'redirect' => apply_filters( 'tm_wizards_install_finish_redirect', null ),
 				) );
 			}
 
@@ -148,10 +149,17 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				)
 			);
 
-			$installed = $this->installer->install( $source );
-			$this->log = ob_get_clean();
+			$installed       = $this->installer->install( $source );
+			$this->log       = ob_get_clean();
+			$plugin_activate = $this->installer->plugin_info();
+			$activate        = activate_plugin( $plugin_activate );
 
 			return $installed;
+		}
+
+		public function test() {
+			$this->do_plugin_install( tm_wizard_data()->get_plugin_data( 'cherry-services-list' ) );
+			die();
 		}
 
 		/**
