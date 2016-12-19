@@ -28,13 +28,36 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		private static $instance = null;
 
 		/**
+		 * Installer storage
+		 *
+		 * @var object
+		 */
+		public $installer = null;
+
+		/**
+		 * Is wizard page trigger
+		 *
+		 * @var boolean
+		 */
+		private $is_wizard = false;
+
+		/**
 		 * Constructor for the class
 		 */
 		function __construct() {
 
 			add_action( 'wp_ajax_tm_wizard_install_plugin', array( $this, 'install_plugin' ) );
-			//add_action( 'admin_init', array( $this, 'test' ) );
+			add_action( 'admin_init', array( $this, 'test' ) );
 
+		}
+
+		/**
+		 * Check if currently processing wizard request.
+		 *
+		 * @return bool
+		 */
+		public function is_wizard_request() {
+			return $this->is_wizard;
 		}
 
 		/**
@@ -43,6 +66,8 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		 * @return void
 		 */
 		public function install_plugin() {
+
+			$this->is_wizard = true;
 
 			if ( ! current_user_can( 'install_plugins' ) ) {
 				wp_send_json_error(
@@ -96,30 +121,76 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		/**
 		 * Process plugin installation.
 		 *
-		 * @param  array $plugin Plugin slug.
+		 * @param  array $plugin Plugin data.
 		 * @return bool
 		 */
-		public function do_plugin_install( $plugin = null ) {
+		public function do_plugin_install( $plugin = array() ) {
 
 			$this->dependencies();
-			var_dump( $plugin );
 
-			$installer = new TM_Wizard_Plugin_Upgrader(
+			$source          = $this->locate_source( $plugin );
+			$this->installer = new TM_Wizard_Plugin_Upgrader(
 				new TM_Wizard_Plugin_Upgrader_Skin(
 					array(
 						'url'    => false,
 						'plugin' => $plugin['slug'],
 						'source' => $plugin['source'],
+						'title'  => $plugin['name'],
 					)
 				)
 			);
 
-			var_dump( $installer->skin );
+			$this->installer->install( $source );
 
 		}
 
+		/**
+		 * Returns plugin installation source URL.
+		 *
+		 * @param  array  $plugin Plugin data.
+		 * @return string
+		 */
+		public function locate_source( $plugin = array() ) {
+
+			$source = isset( $plugin['source'] ) ? $plugin['source'] : 'wordpress';
+			$result = false;
+
+			switch ( $source ) {
+				case 'wordpress':
+
+					require_once ABSPATH . 'wp-admin/includes/plugin-install.php'; // Need for plugins_api
+
+					$api = plugins_api(
+						'plugin_information',
+						array( 'slug' => $plugin['slug'], 'fields' => array( 'sections' => false ) )
+					);
+
+					if ( is_wp_error( $api ) ) {
+						wp_die( $this->installer->strings['oops'] . var_dump( $api ) );
+					}
+
+					if ( isset( $api->download_link ) ) {
+						$result = $api->download_link;
+					}
+
+					break;
+
+				case 'local':
+					# code...
+					break;
+
+				case 'remote':
+					$result = ! empty( $plugin['path'] ) ? esc_url( $plugin['path'] ) : false;
+					break;
+			}
+
+			return $result;
+		}
+
 		public function test() {
-			$this->do_plugin_install( tm_wizard_data()->get_plugin_data( 'cherry-services-list' ) );
+			$this->is_wizard = true;
+			$this->do_plugin_install( tm_wizard_data()->get_plugin_data( 'cherry-data-importer' ) );
+			die();
 		}
 
 		/**
