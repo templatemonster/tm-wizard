@@ -42,13 +42,17 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		private $is_wizard = false;
 
 		/**
+		 * Installation log.
+		 *
+		 * @var null
+		 */
+		private $log = null;
+
+		/**
 		 * Constructor for the class
 		 */
 		function __construct() {
-
 			add_action( 'wp_ajax_tm_wizard_install_plugin', array( $this, 'install_plugin' ) );
-			add_action( 'admin_init', array( $this, 'test' ) );
-
 		}
 
 		/**
@@ -111,6 +115,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 					'skin'   => $skin,
 					'type'   => $type,
 					'slug'   => $next,
+					'log'    => $this->log,
 				)
 			);
 
@@ -126,6 +131,9 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		 */
 		public function do_plugin_install( $plugin = array() ) {
 
+			$this->log = null;
+			ob_start();
+
 			$this->dependencies();
 
 			$source          = $this->locate_source( $plugin );
@@ -140,8 +148,10 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				)
 			);
 
-			$this->installer->install( $source );
+			$installed = $this->installer->install( $source );
+			$this->log = ob_get_clean();
 
+			return $installed;
 		}
 
 		/**
@@ -176,7 +186,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 					break;
 
 				case 'local':
-					# code...
+					$result = ! empty( $plugin['path'] ) ? $plugin['path'] : false;
 					break;
 
 				case 'remote':
@@ -185,12 +195,6 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			}
 
 			return $result;
-		}
-
-		public function test() {
-			$this->is_wizard = true;
-			$this->do_plugin_install( tm_wizard_data()->get_plugin_data( 'cherry-data-importer' ) );
-			die();
 		}
 
 		/**

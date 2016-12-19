@@ -41,12 +41,12 @@ class TM_Wizard_Plugin_Upgrader extends Plugin_Upgrader {
 		}
 
 		$this->run( array(
-			'package' => $package,
-			'destination' => WP_PLUGIN_DIR,
+			'package'           => $package,
+			'destination'       => WP_PLUGIN_DIR,
 			'clear_destination' => false, // Do not overwrite files.
-			'clear_working' => true,
-			'hook_extra' => array(
-				'type' => 'plugin',
+			'clear_working'     => true,
+			'hook_extra'        => array(
+				'type'   => 'plugin',
 				'action' => 'install',
 			)
 		) );
@@ -55,8 +55,9 @@ class TM_Wizard_Plugin_Upgrader extends Plugin_Upgrader {
 		remove_filter( 'upgrader_source_selection', array( $this, 'check_package') );
 		remove_filter( 'upgrader_source_selection', array( $this, 'maybe_adjust_source_dir' ), 1 );
 
-		if ( ! $this->result || is_wp_error($this->result) )
+		if ( ! $this->result || is_wp_error( $this->result ) ) {
 			return $this->result;
+		}
 
 		// Force refresh of plugin update information
 		wp_clean_plugins_cache( $parsed_args['clear_update_cache'] );
