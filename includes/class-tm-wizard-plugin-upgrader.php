@@ -135,8 +135,6 @@ class TM_Wizard_Plugin_Upgrader extends Plugin_Upgrader {
 	 */
 	public function plugin_info() {
 
-		var_dump( $this->result );
-
 		/** Return false if installation result isn't an array or the destination name isn't set */
 		if ( ! is_array( $this->result ) ) {
 			return false;
