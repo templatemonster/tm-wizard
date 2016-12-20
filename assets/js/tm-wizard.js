@@ -36,9 +36,18 @@
 				.on( 'click.tmWizard', tmWizard.css.closePopup, tmWizard.closePopup )
 				.on( 'change.tmWizard', tmWizard.css.selectType, tmWizard.selectInstallType );
 
+			$( '.cdi-advanced-popup' ).on( 'cdi-popup-opened', tmWizard.setURL );
+
 			if ( undefined !== settings.firstPlugin ) {
 				tmWizard.vars.template = wp.template( 'wizard-item' );
 				tmWizard.installPlugin( settings.firstPlugin );
+			}
+		},
+
+		setURL: function() {
+			var $this = $( this );
+			if ( undefined !== settings.importURL ) {
+				$this.data( 'url', settings.importURL );
 			}
 		},
 
