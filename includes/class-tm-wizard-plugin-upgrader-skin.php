@@ -16,6 +16,13 @@ class TM_Wizard_Plugin_Upgrader_Skin extends Plugin_Installer_Skin {
 	public $source = 'wordpress';
 
 	/**
+	 * Result type
+	 *
+	 * @var string
+	 */
+	public $result_type = 'success';
+
+	/**
 	 * Construtor for the class.
 	 *
 	 * @param array $args Options array.
@@ -56,6 +63,47 @@ class TM_Wizard_Plugin_Upgrader_Skin extends Plugin_Installer_Skin {
 		$this->done_footer = true;
 		echo '</ul>';
 		echo '</div>';
+	}
+
+	/**
+	 *
+	 * @param string|WP_Error $errors
+	 */
+	public function error( $errors ) {
+
+		if ( ! $this->done_header ) {
+			$this->header();
+		}
+
+		if ( is_string( $errors ) ) {
+			$this->feedback( $errors );
+		} elseif ( is_wp_error( $errors ) && $errors->get_error_code() ) {
+
+			$this->set_result_type( $errors->errors );
+
+			foreach ( $errors->get_error_messages() as $message ) {
+				if ( $errors->get_error_data() && is_string( $errors->get_error_data() ) ) {
+					$this->feedback( $message . ' ' . esc_html( strip_tags( $errors->get_error_data() ) ) );
+				} else {
+					$this->feedback( $message );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set warning or error result type.
+	 *
+	 * @param array $errors Errors array
+	 */
+	public function set_result_type( $errors ) {
+
+		if ( array_key_exists( 'folder_exists', $errors ) ) {
+			$this->result_type = 'warning';
+		} else {
+			$this->result_type = 'error';
+		}
+
 	}
 
 	/**
