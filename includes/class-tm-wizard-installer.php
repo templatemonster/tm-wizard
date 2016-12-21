@@ -95,12 +95,16 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 
 			if ( ! $next ) {
 
-				$message = esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' );
+				$message  = esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' );
+				$redirect = apply_filters(
+					'tm_wizards_install_finish_redirect',
+					tm_wizard()->get_page_link( array( 'step' => 3 ) )
+				);
 
 				wp_send_json_success( array(
 					'isLast'   => true,
 					'message'  => sprintf( '<div class="tm-wizard-installed">%s</div>', $message ),
-					'redirect' => apply_filters( 'tm_wizards_install_finish_redirect', null ),
+					'redirect' => $redirect,
 					'log'      => $this->log,
 				) );
 			}

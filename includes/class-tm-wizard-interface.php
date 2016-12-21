@@ -145,7 +145,7 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 					tm_wizard()->get_template( 'install.php' );
 					break;
 
-				case 2:
+				case 3:
 					tm_wizard()->get_template( 'after-install.php' );
 					break;
 			}
