@@ -11,6 +11,7 @@
 			closePopup: '.tm-wizard-popup__close',
 			plugins: '.tm-wizard-plugins',
 			progress: '.tm-wizard-progress__bar',
+			showResults: '.tm-wizard-install-results__trigger',
 		},
 
 		vars: {
@@ -34,6 +35,7 @@
 				.on( 'click.tmWizard', tmWizard.css.runInstall, tmWizard.runInstall )
 				.on( 'click.tmWizard', tmWizard.css.confirmInstall, tmWizard.confirmInstall )
 				.on( 'click.tmWizard', tmWizard.css.closePopup, tmWizard.closePopup )
+				.on( 'click.tmWizard', tmWizard.css.showResults, tmWizard.showResults )
 				.on( 'change.tmWizard', tmWizard.css.selectType, tmWizard.selectInstallType );
 
 			$( '.cdi-advanced-popup' ).on( 'cdi-popup-opened', tmWizard.setURL );
@@ -42,6 +44,11 @@
 				tmWizard.vars.template = wp.template( 'wizard-item' );
 				tmWizard.installPlugin( settings.firstPlugin );
 			}
+		},
+
+		showResults: function() {
+			var $this = $( this );
+			$this.toggleClass( 'is-active' );
 		},
 
 		setURL: function() {
@@ -129,6 +136,8 @@
 					return;
 				}
 
+				target.append( response.data.log );
+
 				if ( true !== response.data.isLast ) {
 					tmWizard.installPlugin( response.data );
 				} else {
@@ -138,6 +147,8 @@
 					if ( true === settings.redirect ) {
 						window.location = response.data.redirect;
 					}
+
+					target.after( response.data.message );
 
 				}
 

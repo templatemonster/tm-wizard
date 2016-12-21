@@ -11,6 +11,7 @@ $warningColorAlt: #ee8425;
 $inputColor:      #f1f1f1;
 $bordersColor:    rgba(0,0,0,0.1);
 $textColor:       #23282d;
+$textColorAlt:    #c0c0c0;
 $bodyColor:       #fff;
 $innerBoxColor:   #efefef;
 
@@ -153,12 +154,45 @@ $fontSize:        15px;
 		display: inline-block;
 		vertical-align: top;
 	}
-	.dashicons {
+	> .dashicons {
 		position: absolute;
 		left: 15px;
 		top: 15px;
 		color: $primaryColor;
 	}
+}
+
+.tm-wizard-install-results {
+	&__trigger {
+		position: absolute;
+		right: 0;
+		top: 1em;
+		padding: 0 2em 0 0;
+		color: $textColorAlt;
+		cursor: pointer;
+		.dashicons {
+			font-size: 1.4em;
+			margin: -1px 0 0 0;
+		}
+		&.is-active + ul {
+			display: block;
+		}
+	}
+	ul {
+		font-size: 0.8em;
+		padding: 10px 0;
+		display: none;
+		li {
+			padding: 0 0 5px;
+			margin: 0;
+			list-style: circle;
+		}
+	}
+}
+
+.tm-wizard-installed {
+	margin: 0 0.66667em;
+	color: $textColorAlt;
 }
 
 .tm-wizard-popup {

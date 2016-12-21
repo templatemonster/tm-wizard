@@ -94,10 +94,14 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			$next = tm_wizard_data()->get_next_skin_plugin( $plugin, $skin, $type );
 
 			if ( ! $next ) {
+
+				$message = esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' );
+
 				wp_send_json_success( array(
 					'isLast'   => true,
-					'message'  => esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' ),
+					'message'  => sprintf( '<div class="tm-wizard-installed">%s</div>', $message ),
 					'redirect' => apply_filters( 'tm_wizards_install_finish_redirect', null ),
+					'log'      => $this->log,
 				) );
 			}
 

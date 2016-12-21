@@ -39,7 +39,11 @@ class TM_Wizard_Plugin_Upgrader_Skin extends Plugin_Installer_Skin {
 		}
 		$this->done_header = true;
 		echo '<div class="tm-wizard-install-results">';
-		echo '<ul>';
+			echo '<div class="tm-wizard-install-results__trigger">';
+				esc_html_e( 'Details', 'tm-wizard' );
+				echo '<span class="dashicons dashicons-arrow-down"></span>';
+			echo '</div>';
+			echo '<ul>';
 	}
 
 	/**
