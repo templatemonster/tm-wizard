@@ -9,35 +9,58 @@ $dangerColorAlt:  #c73434;
 $warningColor:    #faa730;
 $warningColorAlt: #ee8425;
 $inputColor:      #f1f1f1;
-$bordersColor:    rgba(0,0,0,0.1);
-$textColor:       #23282d;
-$textColorAlt:    #c0c0c0;
+$bordersColor:    #e5e5e5;
+$textColor:       #96989a;
+$textColorAlt:    #23282d;
 $bodyColor:       #fff;
 $innerBoxColor:   #efefef;
 
-$fontSize:        15px;
+$fontSize:        13px;
 
 .tm-wizard {
 	background: $bodyColor;
 	color: $textColor;
-	padding: 2em;
+	padding: 40px 50px;
 	border: 1px solid $bordersColor;
 	font-size: $fontSize;
-	max-width: 800px;
-	box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
-	border-radius: 5px;
+	line-height: 19px;
+	max-width: 1100px;
+
+	&-msg {
+		padding: 15px 0 25px;
+	}
+
+	&-server {
+		padding: 10px 0 25px;
+		margin: 0;
+		&__item {
+			font-size: 14px;
+			color: $primaryColor;
+			padding: 0 0 8px;
+			margin: 0;
+		}
+	}
 
 	h2 {
-		margin: 0;
-		padding: 0 0 1.5em;
-		font-size: 20px;
+		margin: 0 0 30px;
+		padding: 0 0 15px;
+		font-size: 30px;
 		line-height: 1em;
+		color: $textColorAlt;
+		border-bottom: 1px solid $bordersColor;
+	}
+	h4 {
+		font-size: 20px;
+		line-height: 27px;
+		padding: 0 0 10px;
+		margin: 0;
+		color: $textColorAlt;
 	}
 	.btn {
 		display: inline-block;
-		padding: 1.25em 1.66667em;
+		padding: 15px 30px;
 		font-size: 12px;
-		line-height: 1.66666em;
+		line-height: 20px;
 		text-transform: uppercase;
 		font-weight: bold;
 		border: none;
@@ -49,6 +72,7 @@ $fontSize:        15px;
 		border-radius: 5px;
 		transition: all 200ms linear;
 		text-decoration: none;
+		box-shadow: 0 5px 15px rgba( 0,0,0,.18 );
 		&:focus,
 		&:active {
 			box-shadow: none;
@@ -57,6 +81,7 @@ $fontSize:        15px;
 		&:hover {
 			background: $defaultColorAlt;
 			color: #fff;
+			box-shadow: 0 1px 3px rgba( 0,0,0,.18 );
 		}
 		&.btn-primary {
 			background: $primaryColor;

@@ -133,20 +133,24 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 		 */
 		public function dispatch() {
 
-			$step = ! empty( $_GET['step'] ) ? intval( $_GET['step'] ) : 1;
+			$step = ! empty( $_GET['step'] ) ? intval( $_GET['step'] ) : 0;
 
 			switch ( $step ) {
 
+				case 0:
+					tm_wizard()->get_template( 'step-service-notice.php' );
+					break;
+
 				case 1:
-					tm_wizard()->get_template( 'before-install.php' );
+					tm_wizard()->get_template( 'step-before-install.php' );
 					break;
 
 				case 2:
-					tm_wizard()->get_template( 'install.php' );
+					tm_wizard()->get_template( 'step-install.php' );
 					break;
 
 				case 3:
-					tm_wizard()->get_template( 'after-install.php' );
+					tm_wizard()->get_template( 'step-after-install.php' );
 					break;
 			}
 
@@ -260,6 +264,90 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 			}
 
 			return $plugins_str;
+		}
+
+		/**
+		 * Validae server requirements.
+		 *
+		 * @return string
+		 */
+		public function server_notice() {
+
+			$data = array(
+				array(
+					'arg'     => null,
+					'_cb'     => 'phpversion',
+					'rec'     => '5.3',
+					'units'   => null,
+					'name'    => esc_html__( 'PHP version', 'tm-wizard' ),
+					'compare' => 'version_compare',
+				),
+				array(
+					'arg'     => 'memory_limit',
+					'_cb'     => 'ini_get',
+					'rec'     => 128,
+					'units'   => 'b',
+					'name'    => esc_html__( 'Memory limit', 'tm-wizard' ),
+					'compare' => array( $this, 'val_compare' ),
+				),
+				array(
+					'arg'     => 'max_execution_time',
+					'_cb'     => 'ini_get',
+					'rec'     => 60,
+					'units'   => 's',
+					'name'    => esc_html__( 'Max execution time', 'tm-wizard' ),
+					'compare' => array( $this, 'val_compare' ),
+				),
+			);
+
+			$format = '<li class="tm-wizard-server__item">%1$s: %2$s%3$s (%4$s)</li>';
+			$result = '';
+
+			foreach ( $data as $prop ) {
+
+				if ( null !== $prop['arg'] ) {
+					$val = call_user_func( $prop['_cb'], $prop['arg'] );
+				} else {
+					$val = call_user_func( $prop['_cb'] );
+				}
+
+				$compare = call_user_func( $prop['compare'], $val, $prop['rec'] );
+
+				if ( -1 === $compare ) {
+					$msg = sprintf( esc_html__( '%s Recommended', 'tm-wizard' ), $prop['rec'] );
+				} else {
+					$msg = esc_html__( 'Ok', 'tm-wizard' );
+				}
+
+				$result .= sprintf( $format, $prop['name'], $val, $prop['units'], $msg );
+
+			}
+
+			return sprintf( '<ul class="tm-wizard-server">%s</ul>', $result );
+		}
+
+		/**
+		 * Compare 2 values.
+		 *
+		 * @return int
+		 */
+		public function val_compare( $a, $b ) {
+
+			$a = intval( $a );
+			$b = intval( $b );
+
+			if ( $a > $b ) {
+				return 1;
+			}
+
+			if ( $a === $b ) {
+				return 0;
+			}
+
+			if ( $a < $b ) {
+				return -1;
+			}
+
 		}
 
 		/**
