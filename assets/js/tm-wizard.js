@@ -12,6 +12,7 @@
 			plugins: '.tm-wizard-plugins',
 			progress: '.tm-wizard-progress__bar',
 			showResults: '.tm-wizard-install-results__trigger',
+			showPlugins: '.tm-wizard-skin-item__plugins-title',
 		},
 
 		vars: {
@@ -36,6 +37,7 @@
 				.on( 'click.tmWizard', tmWizard.css.confirmInstall, tmWizard.confirmInstall )
 				.on( 'click.tmWizard', tmWizard.css.closePopup, tmWizard.closePopup )
 				.on( 'click.tmWizard', tmWizard.css.showResults, tmWizard.showResults )
+				.on( 'click.tmWizard', tmWizard.css.showPlugins, tmWizard.showPlugins )
 				.on( 'change.tmWizard', tmWizard.css.selectType, tmWizard.selectInstallType );
 
 			$( '.cdi-advanced-popup' ).on( 'cdi-popup-opened', tmWizard.setURL );
@@ -44,6 +46,10 @@
 				tmWizard.vars.template = wp.template( 'wizard-item' );
 				tmWizard.installPlugin( settings.firstPlugin );
 			}
+		},
+
+		showPlugins: function() {
+			$( this ).toggleClass( 'is-active' );
 		},
 
 		showResults: function() {

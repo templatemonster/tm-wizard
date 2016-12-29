@@ -27,6 +27,47 @@ $fontSize:          13px;
 	line-height: 19px;
 	max-width: 1100px;
 
+	&-skin-item {
+		display: flex;
+		&__thumb {
+			width: 310px;
+			img {
+				box-shadow: 0 5px 21px rgba( 0,0,0,.18 );
+			}
+		}
+		&__summary {
+			width: calc( 100% - 310px );
+			padding: 0 0 0 35px;
+		}
+		&__plugins {
+			overflow: hidden;
+			max-height: 0;
+			box-sizing: border-box;
+			transition: all 300ms linear;
+			&-title {
+				cursor: pointer;
+				&:after {
+					content: "\f140";
+					font-family: 'dashicons';
+				}
+				&.is-active {
+					&:after {
+						content: "\f142";
+					}
+					& + .tm-wizard-skin-item__plugins {
+						max-height: 400px;
+					}
+				}
+			}
+			&-content {
+				padding: 30px;
+				border-radius: 5px;
+				border: 1px solid $bordersColor;
+				background: $innerBoxColor;
+			}
+		}
+	}
+
 	&-msg {
 		padding: 15px 0 25px;
 	}
