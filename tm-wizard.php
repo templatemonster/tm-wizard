@@ -207,12 +207,12 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				return;
 			}
 
+			$handle   = 'tm-wizard';
 			$settings = array(
 				'redirect' => true,
 			);
-			$handle   = 'tm-wizard';
 
-			if ( $this->is_wizard( 2 ) ) {
+			if ( $this->is_wizard( 3 ) ) {
 
 				$skin = ! empty( $_GET['skin'] )
 					? tm_wizard_data()->sanitize_skin( $_GET['skin'] )

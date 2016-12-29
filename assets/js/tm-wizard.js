@@ -5,21 +5,14 @@
 	var tmWizard = {
 		css: {
 			runInstall: '[data-wizard="start-install"]',
-			confirmInstall: '[data-wizard="confirm-install"]',
-			selectType: '[name="install-type"]',
-			popup: '.tm-wizard-popup',
-			closePopup: '.tm-wizard-popup__close',
 			plugins: '.tm-wizard-plugins',
 			progress: '.tm-wizard-progress__bar',
 			showResults: '.tm-wizard-install-results__trigger',
 			showPlugins: '.tm-wizard-skin-item__plugins-title',
+			loaderBtn: '[data-loader="true"]'
 		},
 
 		vars: {
-			type: 'lite',
-			popup: null,
-			url: null,
-			skin: null,
 			plugins: null,
 			template: null,
 			currProgress: 0,
@@ -28,24 +21,23 @@
 
 		init: function() {
 
-			tmWizard.vars.popup    = $( tmWizard.css.popup );
 			tmWizard.vars.progress = $( tmWizard.css.progress );
 			tmWizard.vars.percent  = $( '.tm-wizard-progress__label', tmWizard.vars.progress );
 
 			$( document )
 				.on( 'click.tmWizard', tmWizard.css.runInstall, tmWizard.runInstall )
-				.on( 'click.tmWizard', tmWizard.css.confirmInstall, tmWizard.confirmInstall )
-				.on( 'click.tmWizard', tmWizard.css.closePopup, tmWizard.closePopup )
 				.on( 'click.tmWizard', tmWizard.css.showResults, tmWizard.showResults )
 				.on( 'click.tmWizard', tmWizard.css.showPlugins, tmWizard.showPlugins )
-				.on( 'change.tmWizard', tmWizard.css.selectType, tmWizard.selectInstallType );
-
-			$( '.cdi-advanced-popup' ).on( 'cdi-popup-opened', tmWizard.setURL );
+				.on( 'click.tmWizard', tmWizard.css.loaderBtn, tmWizard.showLoader );
 
 			if ( undefined !== settings.firstPlugin ) {
 				tmWizard.vars.template = wp.template( 'wizard-item' );
 				tmWizard.installPlugin( settings.firstPlugin );
 			}
+		},
+
+		showLoader: function() {
+			$( this ).addClass( 'in-progress' );
 		},
 
 		showPlugins: function() {
@@ -55,39 +47,6 @@
 		showResults: function() {
 			var $this = $( this );
 			$this.toggleClass( 'is-active' );
-		},
-
-		setURL: function() {
-			var $this = $( this );
-			if ( undefined !== settings.importURL ) {
-				$this.data( 'url', settings.importURL );
-			}
-		},
-
-		closePopup: function() {
-			tmWizard.vars.popup.addClass( 'popup-hidden' );
-			$( '.btn.in-progress', tmWizard.vars.popup ).removeClass( 'in-progress' );
-		},
-
-		selectInstallType: function() {
-			var $this = $( this ),
-				type  = $this.val();
-
-			tmWizard.vars.type = type;
-		},
-
-		confirmInstall: function() {
-			$( this ).addClass( 'in-progress' );
-			window.location = tmWizard.vars.url.replace( '%type%', tmWizard.vars.type );
-		},
-
-		runInstall: function() {
-
-			var $this = $( this );
-
-			tmWizard.vars.skin = $this.data( 'skin' );
-			tmWizard.vars.url  = $this.data( 'href' );
-			tmWizard.vars.popup.removeClass( 'popup-hidden' );
 		},
 
 		installPlugin: function( data ) {
@@ -124,6 +83,8 @@
 
 		installRequest: function( target, data ) {
 
+			var icon;
+
 			$.ajax({
 				url: ajaxurl,
 				type: 'get',
@@ -158,7 +119,14 @@
 
 				}
 
-				$( '.tm-wizard-loader', target ).replaceWith( '<span class="dashicons dashicons-yes"></span>' );
+				if ( 'error' === response.data.resultType ) {
+					icon = '<span class="dashicons dashicons-no"></span>';
+				} else {
+					icon = '<span class="dashicons dashicons-yes"></span>';
+				}
+
+				target.addClass( 'installed-' + response.data.resultType );
+				$( '.tm-wizard-loader', target ).replaceWith( icon );
 
 			});
 		}

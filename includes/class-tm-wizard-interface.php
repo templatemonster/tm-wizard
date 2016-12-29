@@ -146,6 +146,10 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 					break;
 
 				case 2:
+					tm_wizard()->get_template( 'step-select-type.php' );
+					break;
+
+				case 3:
 					tm_wizard()->get_template( 'step-install.php' );
 					break;
 
@@ -219,6 +223,17 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 		 * @return mixed
 		 */
 		public function get_skin_data( $key = null ) {
+
+			if ( empty( $this->skin ) ) {
+				$skin = isset( $_GET['skin'] ) ? esc_attr( $_GET['skin'] ) : false;
+
+				if ( ! $skin ) {
+					return false;
+				}
+
+				$data = tm_wizard_settings()->get( array( 'skins', 'advanced', $skin ) );
+				$this->the_skin( $skin, $data );
+			}
 
 			if ( empty( $this->skin[ $key ] ) ) {
 				return false;

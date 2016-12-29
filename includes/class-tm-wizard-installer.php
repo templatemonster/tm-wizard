@@ -93,6 +93,10 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 
 			$next = tm_wizard_data()->get_next_skin_plugin( $plugin, $skin, $type );
 
+			$result_type = isset( $this->installer->skin->result_type )
+								? $this->installer->skin->result_type
+								: 'success';
+
 			if ( ! $next ) {
 
 				$message  = esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' );
@@ -102,10 +106,11 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				);
 
 				wp_send_json_success( array(
-					'isLast'   => true,
-					'message'  => sprintf( '<div class="tm-wizard-installed">%s</div>', $message ),
-					'redirect' => $redirect,
-					'log'      => $this->log,
+					'isLast'     => true,
+					'message'    => sprintf( '<div class="tm-wizard-installed">%s</div>', $message ),
+					'redirect'   => $redirect,
+					'log'        => $this->log,
+					'resultType' => $result_type,
 				) );
 			}
 
@@ -120,11 +125,12 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			$data = array_merge(
 				$registered[ $next ],
 				array(
-					'isLast' => false,
-					'skin'   => $skin,
-					'type'   => $type,
-					'slug'   => $next,
-					'log'    => $this->log,
+					'isLast'     => false,
+					'skin'       => $skin,
+					'type'       => $type,
+					'slug'       => $next,
+					'log'        => $this->log,
+					'resultType' => $result_type,
 				)
 			);
 
