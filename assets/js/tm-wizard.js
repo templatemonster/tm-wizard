@@ -30,6 +30,7 @@
 
 			if ( undefined !== settings.firstPlugin ) {
 				tmWizard.vars.template = wp.template( 'wizard-item' );
+				settings.firstPlugin.isFirst = true;
 				tmWizard.installPlugin( settings.firstPlugin );
 			}
 		},
@@ -83,12 +84,17 @@
 
 			var icon;
 
+			if ( undefined === data.isFirst ) {
+				data.isFirst = false;
+			}
+
 			$.ajax({
 				url: ajaxurl,
 				type: 'get',
 				dataType: 'json',
 				data: {
 					action: 'tm_wizard_install_plugin',
+					isFirst: data.isFirst,
 					plugin: data.slug,
 					skin: data.skin,
 					type: data.type

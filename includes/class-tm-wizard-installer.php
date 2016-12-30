@@ -82,6 +82,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			$plugin = ! empty( $_GET['plugin'] ) ? esc_attr( $_GET['plugin'] ) : false;
 			$skin   = ! empty( $_GET['skin'] ) ? esc_attr( $_GET['skin'] ) : false;
 			$type   = ! empty( $_GET['type'] ) ? esc_attr( $_GET['type'] ) : false;
+			$first  = ! empty( $_GET['isFirst'] ) ? esc_attr( $_GET['isFirst'] ) : false;
 
 			if ( ! $plugin || ! $skin || ! $type ) {
 				wp_send_json_error(
@@ -97,6 +98,11 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 								? $this->installer->skin->result_type
 								: 'success';
 
+			if ( $first ) {
+				$active_skin = get_option( 'tm_active_skin' );
+				$this->deactivate_skin_plugins( $active_skin['skin'], $active_skin['type'] );
+			}
+
 			if ( ! $next ) {
 
 				$message  = esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' );
@@ -104,6 +110,9 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 					'tm_wizards_install_finish_redirect',
 					tm_wizard()->get_page_link( array( 'step' => 4, 'skin' => $skin, 'type' => $type ) )
 				);
+
+				delete_option( 'tm_active_skin' );
+				add_option( 'tm_active_skin', array( 'skin' => $skin, 'type' => $type ), '', false );
 
 				wp_send_json_success( array(
 					'isLast'     => true,
@@ -135,6 +144,33 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			);
 
 			wp_send_json_success( $data );
+
+		}
+
+		/**
+		 * Deactivate current skin plugins.
+		 *
+		 * @param  string $skin Skin slug.
+		 * @param  string $type Skin type.
+		 * @return null
+		 */
+		public function deactivate_skin_plugins( $skin = null, $type = null ) {
+
+			$skins   = tm_wizard_settings()->get( array( 'skins' ) );
+			$plugins = isset( $skins['advanced'][ $skin ][ $type ] ) ? $skins['advanced'][ $skin ][ $type ] : array();
+			$active  = get_option( 'active_plugins' );
+
+			if ( ! $plugins ) {
+				return;
+			}
+
+			foreach ( $plugins as $plugin ) {
+				foreach ( $active as $active_plugin ) {
+					if ( false !== strpos( $plugin, $active_plugin ) ) {
+						deactivate_plugin( $active_plugin );
+					}
+				}
+			}
 
 		}
 
