@@ -153,7 +153,7 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 					tm_wizard()->get_template( 'step-install.php' );
 					break;
 
-				case 3:
+				case 4:
 					tm_wizard()->get_template( 'step-after-install.php' );
 					break;
 			}

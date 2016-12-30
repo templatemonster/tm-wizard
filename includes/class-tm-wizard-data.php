@@ -94,36 +94,6 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		}
 
 		/**
-		 * Get import URL for data importer connection.
-		 *
-		 * @param  string $skin Skin name.
-		 * @param  string $type Installation type.
-		 * @return string
-		 */
-		public function get_content_import_url( $skin = null, $type = null ) {
-
-			if ( ! function_exists( 'cdi' ) || ! is_callable( array( cdi(), 'get_setting' ) ) ) {
-				return null;
-			}
-
-			if( ! function_exists( 'cdi_tools' ) || ! is_callable( array( cdi_tools(), 'secure_path' ) ) ) {
-				return null;
-			}
-
-			$file = cdi()->get_setting( array( 'advanced_import', $skin, $type ) );
-			$file = cdi_tools()->secure_path( $file );
-
-			if ( ! $file ) {
-				return null;
-			}
-
-			return add_query_arg(
-				array( 'page' => cdi()->slug, 'tab' => 'import', 'step' => 2, 'file' => $file ),
-				esc_url( admin_url( 'admin.php' ) )
-			);
-		}
-
-		/**
 		 * Get next skin plugin.
 		 *
 		 * @param  string $skin Skin slug.

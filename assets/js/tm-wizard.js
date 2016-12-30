@@ -4,7 +4,6 @@
 
 	var tmWizard = {
 		css: {
-			runInstall: '[data-wizard="start-install"]',
 			plugins: '.tm-wizard-plugins',
 			progress: '.tm-wizard-progress__bar',
 			showResults: '.tm-wizard-install-results__trigger',
@@ -25,7 +24,6 @@
 			tmWizard.vars.percent  = $( '.tm-wizard-progress__label', tmWizard.vars.progress );
 
 			$( document )
-				.on( 'click.tmWizard', tmWizard.css.runInstall, tmWizard.runInstall )
 				.on( 'click.tmWizard', tmWizard.css.showResults, tmWizard.showResults )
 				.on( 'click.tmWizard', tmWizard.css.showPlugins, tmWizard.showPlugins )
 				.on( 'click.tmWizard', tmWizard.css.loaderBtn, tmWizard.showLoader );
@@ -111,7 +109,7 @@
 
 					$( document ).trigger( 'tm-wizard-install-finished' );
 
-					if ( true === settings.redirect ) {
+					if ( 1 == settings.redirect ) {
 						window.location = response.data.redirect;
 					}
 

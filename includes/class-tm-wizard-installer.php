@@ -102,7 +102,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				$message  = esc_html__( 'All plugins are installed. Redirecting to the next step...', 'tm-wizard' );
 				$redirect = apply_filters(
 					'tm_wizards_install_finish_redirect',
-					tm_wizard()->get_page_link( array( 'step' => 3 ) )
+					tm_wizard()->get_page_link( array( 'step' => 4, 'skin' => $skin, 'type' => $type ) )
 				);
 
 				wp_send_json_success( array(

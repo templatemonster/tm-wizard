@@ -140,6 +140,8 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				$file = $this->path( 'templates/' . $template );
 			}
 
+			$file = apply_filters( 'tm_wizard_template_path', $file, $template );
+
 			if ( file_exists( $file ) ) {
 				include $file;
 			}
@@ -224,7 +226,6 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 
 				$settings['firstPlugin']  = tm_wizard_data()->get_first_plugin_data( $skin, $type );
 				$settings['totalPlugins'] = tm_wizard_data()->get_plugins_count( $skin, $type );
-				$settings['importURL']    = tm_wizard_data()->get_content_import_url( $skin, $type );
 			}
 
 			wp_enqueue_script( $handle, $this->url( 'assets/js/tm-wizard.js' ), array( 'wp-util' ), '20161214', true );
