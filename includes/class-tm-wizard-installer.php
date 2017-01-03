@@ -83,6 +83,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			$skin   = ! empty( $_GET['skin'] ) ? esc_attr( $_GET['skin'] ) : false;
 			$type   = ! empty( $_GET['type'] ) ? esc_attr( $_GET['type'] ) : false;
 			$first  = ! empty( $_GET['isFirst'] ) ? esc_attr( $_GET['isFirst'] ) : false;
+			$first  = filter_var( $first, FILTER_VALIDATE_BOOLEAN );
 
 			if ( ! $plugin || ! $skin || ! $type ) {
 				wp_send_json_error(
@@ -100,7 +101,11 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 
 			if ( $first ) {
 				$active_skin = get_option( 'tm_active_skin' );
-				$this->deactivate_skin_plugins( $active_skin['skin'], $active_skin['type'] );
+				if ( $active_skin ) {
+					add_filter( 'tm_wizard_deactivate_skin_plugins', array( $this, 'unset_next_skin_plugins' ) );
+					$this->deactivate_skin_plugins( $active_skin['skin'], $active_skin['type'] );
+					remove_filter( 'tm_wizard_deactivate_skin_plugins', array( $this, 'unset_next_skin_plugins' ) );
+				}
 			}
 
 			if ( ! $next ) {
@@ -148,6 +153,31 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		}
 
 		/**
+		 * Remove plugins required for next skin from deactivation list.
+		 *
+		 * @param  array $plugins Plugins list.
+		 * @return array
+		 */
+		public function unset_next_skin_plugins( $plugins = array() ) {
+
+			$skin = ! empty( $_GET['skin'] ) ? esc_attr( $_GET['skin'] ) : false;
+			$type = ! empty( $_GET['type'] ) ? esc_attr( $_GET['type'] ) : false;
+
+			if ( ! $type || ! $skin || empty( $plugins ) ) {
+				return $plugins;
+			}
+
+			$skin_plugins = tm_wizard_data()->get_skin_plugins( $skin );
+			$skin_plugins = $skin_plugins[ $type ];
+
+			if ( empty( $skin_plugins ) ) {
+				return $plugins;
+			}
+
+			return array_diff( $plugins, $skin_plugins );
+		}
+
+		/**
 		 * Deactivate current skin plugins.
 		 *
 		 * @param  string $skin Skin slug.
@@ -159,6 +189,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			$skins   = tm_wizard_settings()->get( array( 'skins' ) );
 			$plugins = isset( $skins['advanced'][ $skin ][ $type ] ) ? $skins['advanced'][ $skin ][ $type ] : array();
 			$active  = get_option( 'active_plugins' );
+			$plugins = apply_filters( 'tm_wizard_deactivate_skin_plugins', $plugins, $kin );
 
 			if ( ! $plugins ) {
 				return;
@@ -166,8 +197,8 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 
 			foreach ( $plugins as $plugin ) {
 				foreach ( $active as $active_plugin ) {
-					if ( false !== strpos( $plugin, $active_plugin ) ) {
-						deactivate_plugin( $active_plugin );
+					if ( false !== strpos( $active_plugin, $plugin ) ) {
+						deactivate_plugins( $active_plugin );
 					}
 				}
 			}
