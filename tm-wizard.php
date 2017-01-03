@@ -155,6 +155,7 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 			require_once $this->path( 'includes/class-tm-wizard-interface.php' );
 			require_once $this->path( 'includes/class-tm-wizard-installer.php' );
 			require_once $this->path( 'includes/class-tm-wizard-data.php' );
+			require_once $this->path( 'includes/class-tm-wizard-extensions.php' );
 		}
 
 		/**
@@ -228,7 +229,7 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				$settings['totalPlugins'] = tm_wizard_data()->get_plugins_count( $skin, $type );
 			}
 
-			wp_enqueue_script( $handle, $this->url( 'assets/js/tm-wizard.js' ), array( 'wp-util' ), '20161214', true );
+			wp_enqueue_script( $handle, $this->url( 'assets/js/tm-wizard.js' ), array( 'wp-util' ), '20170103', true );
 			wp_enqueue_style( $handle, $this->url( 'assets/css/tm-wizard.css' ), false, '20161214' );
 
 			do_action( 'tm_wizard_enqueue_assets' );

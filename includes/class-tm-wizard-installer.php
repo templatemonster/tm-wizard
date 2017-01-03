@@ -213,6 +213,13 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		 */
 		public function do_plugin_install( $plugin = array() ) {
 
+			/**
+			 * Hook fires before plugin installation.
+			 *
+			 * @param array $plugin Plugin data array.
+			 */
+			do_action( 'tm_wizard_before_plugin_install', $plugin );
+
 			$this->log = null;
 			ob_start();
 
@@ -233,9 +240,61 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			$installed       = $this->installer->install( $source );
 			$this->log       = ob_get_clean();
 			$plugin_activate = $this->installer->plugin_info();
-			$activate        = activate_plugin( $plugin_activate );
+
+			/**
+			 * Hook fires after plugin installation but before activation.
+			 *
+			 * @param array $plugin Plugin data array.
+			 */
+			do_action( 'tm_wizard_after_plugin_install', $plugin );
+
+			$this->activate_plugin( $plugin_activate, $plugin['slug'] );
+
+			/**
+			 * Hook fires after plugin activation.
+			 *
+			 * @param array $plugin Plugin data array.
+			 */
+			do_action( 'tm_wizard_after_plugin_activation', $plugin );
 
 			return $installed;
+		}
+
+		/**
+		 * Activate plugin.
+		 *
+		 * @param  string $activation_data Activation data.
+		 * @param  string $slug            Plugin slug.
+		 * @return WP_Error|null
+		 */
+		public function activate_plugin( $activation_data, $slug ) {
+
+			if ( ! empty( $activation_data ) ) {
+				$activate = activate_plugin( $activation_data );
+				return $activate;
+			}
+
+			$all_plugins = get_plugins();
+
+			if ( empty( $all_plugins ) ) {
+				return null;
+			}
+
+			$all_plugins = array_keys( $all_plugins );
+
+			foreach ( $all_plugins as $plugin ) {
+
+				if ( false === strpos( $plugin, $slug ) ) {
+					continue;
+				}
+
+				if ( ! is_plugin_active( $plugin ) ) {
+					$activate = activate_plugin( $plugin );
+					return $activate;
+				}
+			}
+
+			return null;
 		}
 
 		public function test() {

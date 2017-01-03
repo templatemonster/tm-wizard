@@ -57,6 +57,7 @@
 			}
 
 			$target.appendTo( tmWizard.vars.plugins );
+			console.log( data );
 			tmWizard.installRequest( $target, data );
 
 		},
