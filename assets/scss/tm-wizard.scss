@@ -30,6 +30,12 @@ $fontSize:          13px;
 	line-height: 19px;
 	max-width: 1100px;
 
+	.notice,
+	.updated,
+	.woocommerce-notice {
+		display: none;
+	}
+
 	&-skins {
 		padding-top: 30px;
 	}

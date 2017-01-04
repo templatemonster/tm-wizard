@@ -230,7 +230,7 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 			}
 
 			wp_enqueue_script( $handle, $this->url( 'assets/js/tm-wizard.js' ), array( 'wp-util' ), '20170103', true );
-			wp_enqueue_style( $handle, $this->url( 'assets/css/tm-wizard.css' ), false, '20161214' );
+			wp_enqueue_style( $handle, $this->url( 'assets/css/tm-wizard.css' ), false, '20170104' );
 
 			do_action( 'tm_wizard_enqueue_assets' );
 
