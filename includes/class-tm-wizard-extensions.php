@@ -34,7 +34,9 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_bp_redirect' ) );
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_bbp_redirect' ) );
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_booked_redirect' ) );
+			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_tribe_redirect' ) );
 
+			add_filter( 'tm_wizard_send_install_data', array( $this, 'add_multi_arg' ), 10, 2 );
 		}
 
 		/**
@@ -84,6 +86,38 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 			delete_transient( '_booked_welcome_screen_activation_redirect' );
 
 			return true;
+		}
+
+		/**
+		 * Prevent tribe events calendar redirect.
+		 *
+		 * @return bool
+		 */
+		public function prevent_tribe_redirect( $plugin ) {
+
+			if ( 'the-events-calendar' !== $plugin['slug'] ) {
+				return false;
+			}
+
+			delete_transient( '_tribe_tickets_activation_redirect' );
+
+			return true;
+		}
+
+		/**
+		 * Add multi-install argument.
+		 *
+		 * @param  array  $data   Send data.
+		 * @param  string $plugin Plugin slug.
+		 * @return array
+		 */
+		public function add_multi_arg( $data = array(), $plugin = '' ) {
+
+			if ( in_array( $plugin, array( 'woocommerce', 'booked' ) ) ) {
+				$data['activate-multi'] = true;
+			}
+
+			return $data;
 		}
 
 		/**

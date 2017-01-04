@@ -79,7 +79,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				);
 			}
 
-			$plugin = ! empty( $_GET['plugin'] ) ? esc_attr( $_GET['plugin'] ) : false;
+			$plugin = ! empty( $_GET['slug'] ) ? esc_attr( $_GET['slug'] ) : false;
 			$skin   = ! empty( $_GET['skin'] ) ? esc_attr( $_GET['skin'] ) : false;
 			$type   = ! empty( $_GET['type'] ) ? esc_attr( $_GET['type'] ) : false;
 			$first  = ! empty( $_GET['isFirst'] ) ? esc_attr( $_GET['isFirst'] ) : false;
@@ -119,13 +119,15 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				delete_option( 'tm_active_skin' );
 				add_option( 'tm_active_skin', array( 'skin' => $skin, 'type' => $type ), '', false );
 
-				wp_send_json_success( array(
+				$data = array(
 					'isLast'     => true,
 					'message'    => sprintf( '<div class="tm-wizard-installed">%s</div>', $message ),
 					'redirect'   => $redirect,
 					'log'        => $this->log,
 					'resultType' => $result_type,
-				) );
+				);
+
+				$this->send_success( $data, $plugin );
 			}
 
 			$registered = tm_wizard_settings()->get( array( 'plugins' ) );
@@ -148,7 +150,20 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				)
 			);
 
-			wp_send_json_success( $data );
+			$this->send_success( $data, $plugin );
+
+		}
+
+		/**
+		 * Send JSON success after plugin instalation.
+		 *
+		 * @param  array  $data   Data to send.
+		 * @param  string $plugin Information about current plugin.
+		 * @return void
+		 */
+		public function send_success( $data = array(), $plugin = '' ) {
+
+			wp_send_json_success( apply_filters( 'tm_wizard_send_install_data', $data, $plugin ) );
 
 		}
 

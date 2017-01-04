@@ -85,6 +85,8 @@
 
 			var icon;
 
+			data.action = 'tm_wizard_install_plugin';
+
 			if ( undefined === data.isFirst ) {
 				data.isFirst = false;
 			}
@@ -93,13 +95,7 @@
 				url: ajaxurl,
 				type: 'get',
 				dataType: 'json',
-				data: {
-					action: 'tm_wizard_install_plugin',
-					isFirst: data.isFirst,
-					plugin: data.slug,
-					skin: data.skin,
-					type: data.type
-				}
+				data: data
 			}).done( function( response ) {
 
 				tmWizard.updateProgress();
