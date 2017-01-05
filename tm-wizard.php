@@ -65,6 +65,18 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		public $current_tab = array();
 
 		/**
+		 * Nonce action name.
+		 * @var string
+		 */
+		public $_nonce = 'tm-wizard-nonce';
+
+		/**
+		 * Notice visibility trigger
+		 * @var  null|boolean
+		 */
+		public $is_notice_visible = null;
+
+		/**
 		 * Constructor for the class
 		 */
 		function __construct() {
@@ -76,6 +88,46 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 			add_action( 'plugins_loaded',        array( $this, 'lang' ), 2 );
 			add_action( 'init',                  array( $this, 'init' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 10 );
+
+			register_activation_hook( __FILE__, array( $this, '_activation' ) );
+			register_deactivation_hook( __FILE__, array( $this, '_deactivation' ) );
+		}
+
+		/**
+		 * Create wizard nonce
+		 *
+		 * @return void
+		 */
+		public function nonce() {
+			wp_create_nonce( $this->_nonce );
+		}
+
+		/**
+		 * Verify nonce
+		 *
+		 * @param  string $nonce Nonce value.
+		 * @return bool
+		 */
+		public function verify_nonce( $nonce ) {
+			return wp_verify_nonce( $nonce, $this->_nonce );
+		}
+
+		/**
+		 * Do stuff on the wiard activation.
+		 *
+		 * @return void
+		 */
+		public function _activation() {
+			add_option( 'tm_wizard_show_notice', 1 );
+		}
+
+		/**
+		 * Do stuff on wizard deactivation
+		 *
+		 * @return void
+		 */
+		public function _deactivation() {
+			delete_option( 'tm_wizard_show_notice' );
 		}
 
 		/**
@@ -101,7 +153,41 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				return;
 			}
 
+			add_action( 'admin_notices', array( $this, 'wizard_notice' ) );
+
 			$this->load();
+		}
+
+		/**
+		 * Check if wizard notice is visible
+		 *
+		 * @return boolean
+		 */
+		public function is_notice_visible() {
+
+			if ( $this->is_wizard() ) {
+				return false;
+			}
+
+			if ( null === $this->is_notice_visible ) {
+				$this->is_notice_visible = get_option( 'tm_wizard_show_notice' );
+			}
+
+			return $this->is_notice_visible;
+		}
+
+		/**
+		 * Show wizard notice.
+		 *
+		 * @return null
+		 */
+		public function wizard_notice() {
+
+			if ( ! get_option( 'tm_wizard_show_notice' ) ) {
+				return null;
+			}
+
+			$this->get_template( 'wizard-notice.php' );
 		}
 
 		/**
@@ -207,6 +293,12 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		public function enqueue_assets( $hook ) {
 
 			if ( ! $this->is_wizard() ) {
+
+				ob_start();
+				include $this->path( 'assets/css/notice.css' );
+				$notice = ob_get_clean();
+				wp_add_inline_style( 'admin-styles', $notice );
+
 				return;
 			}
 
