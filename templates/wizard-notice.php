@@ -11,7 +11,7 @@
 		<a class="tm-wizard-btn" href="<?php echo tm_wizard()->get_page_link(); ?>"><?php
 			esc_html_e( 'Install', 'tm-wizard' );
 		?></a>
-		<a href="tm-wizard-dismiss" href="<?php echo add_query_arg( array( 'tm_wizard_dismiss' => true, '_nonce' => tm_wizard()->nonce() ) ); ?>"><?php
+		<a class="tm-wizard-dismiss" href="<?php echo add_query_arg( array( 'tm_wizard_dismiss' => true, '_nonce' => tm_wizard()->nonce() ) ); ?>"><?php
 			esc_html_e( 'Dismiss', 'tm-wizard' );
 		?></a>
 	</div>
