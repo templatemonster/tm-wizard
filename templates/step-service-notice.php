@@ -17,6 +17,6 @@
 	}
 ?>
 <a href="<?php echo tm_wizard()->get_page_link( array( 'step' => 1 ) ); ?>" data-loader="true" class="btn btn-primary">
-	<span class="text"><?php esc_html_e( 'Start Install', 'tm-wizard' ); ?></span>
+	<span class="text"><?php esc_html_e( 'Next', 'tm-wizard' ); ?></span>
 	<span class="tm-wizard-loader"><span class="tm-wizard-loader__spinner"></span></span>
 </a>

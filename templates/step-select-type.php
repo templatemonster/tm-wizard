@@ -31,6 +31,6 @@ $skin = tm_wizard_interface()->get_skin_data( 'slug' );
 	<input type="hidden" name="skin" value="<?php echo $skin; ?>">
 	<input type="hidden" name="page" value="<?php echo tm_wizard()->slug(); ?>">
 	<button class="btn btn-primary" data-wizard="confirm-install" data-loader="true" data-href=""><span class="text"><?php
-		esc_html_e( 'Start', 'tm-wizard' );
+		esc_html_e( 'Next', 'tm-wizard' );
 	?></span><span class="tm-wizard-loader"><span class="tm-wizard-loader__spinner"></span></span></button>
 </form>
