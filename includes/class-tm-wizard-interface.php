@@ -47,6 +47,22 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 		function __construct() {
 			add_action( 'admin_menu', array( $this, 'menu_page' ) );
 			add_action( 'admin_footer', array( $this, 'item_template' ) );
+			add_filter( 'cherry_data_importer_tabs_menu_visibility', array( $this, 'import_tabs_visibility' ) );
+		}
+
+		/**
+		 * Disable tabs on import page if we came from wizard.
+		 *
+		 * @param  bool $is_visible Default visibility.
+		 * @return bool
+		 */
+		public function import_tabs_visibility( $is_visible = true ) {
+
+			if ( ! empty( $_GET['referrer'] ) && 'tm-wizard' === $_GET['referrer'] ) {
+				return false;
+			}
+
+			return $is_visible;
 		}
 
 		/**
@@ -282,6 +298,17 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 		}
 
 		/**
+		 * Return value from ini_get and ensure thats it integer.
+		 *
+		 * @param  string $key Key to retrieve from ini_get.
+		 * @return int
+		 */
+		public function ini_get_int( $key = null ) {
+			$val = ini_get( $key );
+			return intval( $val );
+		}
+
+		/**
 		 * Validae server requirements.
 		 *
 		 * @return string
@@ -299,9 +326,9 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 				),
 				array(
 					'arg'     => 'memory_limit',
-					'_cb'     => 'ini_get',
-					'rec'     => 128,
-					'units'   => 'b',
+					'_cb'     => array( $this, 'ini_get_int' ),
+					'rec'     => 128000,
+					'units'   => 'Mb',
 					'name'    => esc_html__( 'Memory limit', 'tm-wizard' ),
 					'compare' => array( $this, 'val_compare' ),
 				),
@@ -315,7 +342,7 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 				),
 			);
 
-			$format = '<li class="tm-wizard-server__item">%1$s: %2$s%3$s (%4$s)</li>';
+			$format = '<li class="tm-wizard-server__item%5$s">%1$s: %2$s%3$s&nbsp;&nbsp;<b>%4$s</b></li>';
 			$result = '';
 
 			foreach ( $data as $prop ) {
@@ -329,16 +356,34 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 				$compare = call_user_func( $prop['compare'], $val, $prop['rec'] );
 
 				if ( -1 === $compare ) {
-					$msg = sprintf( esc_html__( '%s Recommended', 'tm-wizard' ), $prop['rec'] );
+					$msg = sprintf( esc_html__( '%1$s%2$s Recommended', 'tm-wizard' ), $prop['rec'], $prop['units'] );
+					$scs = '';
+					$this->set_wizard_errors( $prop['arg'] );
 				} else {
-					$msg = esc_html__( 'Ok', 'tm-wizard' );
+					$msg     = esc_html__( 'Ok', 'tm-wizard' );
+					$scs = ' check-success';
 				}
 
-				$result .= sprintf( $format, $prop['name'], $val, $prop['units'], $msg );
+				$result .= sprintf( $format, $prop['name'], $val, $prop['units'], $msg, $scs );
 
 			}
 
 			return sprintf( '<ul class="tm-wizard-server">%s</ul>', $result );
+		}
+
+		/**
+		 * Save wizard error.
+		 *
+		 * @param string $arg Norie to ada
+		 */
+		public function set_wizard_errors( $arg = null ) {
+
+			$errors = wp_cache_get( 'errors', 'tm-wizard' );
+			if ( ! $errors ) {
+				$errors[ $arg ] = $arg;
+			}
+			wp_cache_set( 'errors', $errors, 'tm-wizard' );
+
 		}
 
 		/**

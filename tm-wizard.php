@@ -85,11 +85,13 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				return;
 			}
 
-			add_action( 'plugins_loaded',        array( $this, 'lang' ), 2 );
-			add_action( 'init',                  array( $this, 'init' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 10 );
+			add_action( 'plugins_loaded',         array( $this, 'lang' ), 2 );
+			add_action( 'init',                   array( $this, 'init' ) );
+			add_action( 'admin_init',             array( $this, 'dismiss_notice' ) );
+			add_action( 'admin_head',             array( $this, 'notice_css' ) );
+			add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue_assets' ) );
 
-			register_activation_hook( __FILE__, array( $this, '_activation' ) );
+			register_activation_hook( __FILE__,   array( $this, '_activation' ) );
 			register_deactivation_hook( __FILE__, array( $this, '_deactivation' ) );
 		}
 
@@ -173,7 +175,7 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				$this->is_notice_visible = get_option( 'tm_wizard_show_notice' );
 			}
 
-			return $this->is_notice_visible;
+			return apply_filters( 'tm_wizard_notice_visibility', $this->is_notice_visible );
 		}
 
 		/**
@@ -183,11 +185,25 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		 */
 		public function wizard_notice() {
 
-			if ( ! get_option( 'tm_wizard_show_notice' ) ) {
-				return null;
+			if ( ! $this->is_notice_visible() ) {
+				return;
 			}
 
 			$this->get_template( 'wizard-notice.php' );
+		}
+
+		/**
+		 * Dismiss wizard notice.
+		 *
+		 * @return void
+		 */
+		public function dismiss_notice() {
+
+			if ( ! isset( $_GET['tm_wizard_dismiss'] ) ) {
+				return;
+			}
+
+			delete_option( 'tm_wizard_show_notice' );
 		}
 
 		/**
@@ -286,6 +302,29 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		}
 
 		/**
+		 * Show wizard notice CSS
+		 *
+		 * @return null
+		 */
+		public function notice_css() {
+
+			if ( ! $this->is_notice_visible() ) {
+				return;
+			}
+
+			if ( ! $this->is_wizard() ) {
+
+				ob_start();
+				include $this->path( 'assets/css/notice.css' );
+				$notice = ob_get_clean();
+				printf( '<style type="text/css">%s</style>', $notice );
+
+				return;
+			}
+
+		}
+
+		/**
 		 * Enqueue required assets
 		 *
 		 * @return void
@@ -293,12 +332,6 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		public function enqueue_assets( $hook ) {
 
 			if ( ! $this->is_wizard() ) {
-
-				ob_start();
-				include $this->path( 'assets/css/notice.css' );
-				$notice = ob_get_clean();
-				wp_add_inline_style( 'admin-styles', $notice );
-
 				return;
 			}
 
@@ -322,7 +355,7 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 			}
 
 			wp_enqueue_script( $handle, $this->url( 'assets/js/tm-wizard.js' ), array( 'wp-util' ), '20170103', true );
-			wp_enqueue_style( $handle, $this->url( 'assets/css/tm-wizard.css' ), false, '20170104' );
+			wp_enqueue_style( $handle, $this->url( 'assets/css/tm-wizard.css' ), false, '20170109' );
 
 			do_action( 'tm_wizard_enqueue_assets' );
 

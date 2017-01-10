@@ -37,6 +37,11 @@
 		}
 		&__actions {
 			padding-top: 15px;
+			.btn {
+				width: 110px;
+				text-align: center;
+				margin: 0 15px 0 0;
+			}
 		}
 		&__plugins {
 			overflow: hidden;
@@ -134,9 +139,20 @@
 		margin: 0;
 		&__item {
 			font-size: 14px;
-			color: $primaryColor;
-			padding: 0 0 8px;
+			padding: 0 0 8px 20px;
 			margin: 0;
+			position: relative;
+			&.check-success {
+				color: $successColor;
+				&:before {
+					position: absolute;
+					left: -2px;
+					top: 2px;
+					content: "\f147";
+					font-family: 'dashicons';
+					font-size: 20px;
+				}
+			}
 		}
 	}
 
@@ -295,10 +311,10 @@
 		}
 	}
 	&.installed-warning {
-		border-color: $warningColor;
-		background: rgba( red( $warningColor ), green( $warningColor ), blue( $warningColor ), .05 );
+		border-color: $successColor;
+		background: rgba( red( $successColor ), green( $successColor ), blue( $successColor ), .05 );
 		> .dashicons {
-			color: $warningColor;
+			color: $successColor;
 		}
 	}
 	&.installed-error {
@@ -345,6 +361,25 @@
 			margin: 0;
 			list-style: circle;
 		}
+	}
+}
+
+.tm-warning-notice {
+	padding: 10px 10px 10px 35px;
+	position: relative;
+	color: $warningColor;
+	background: rgba( red( $warningColor ), green( $warningColor ), blue( $warningColor ), .1 );
+	margin: -10px 0 30px;
+	&:before {
+		content: "\f534";
+		font-family: "dashicons";
+		position: absolute;
+		left: 10px;
+		top: 50%;
+		font-size: 18px;
+		line-height: 22px;
+		height: 22px;
+		margin: -11px 0 0 0;
 	}
 }
 

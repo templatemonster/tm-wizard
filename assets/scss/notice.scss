@@ -3,6 +3,7 @@
 .tm-wizard-notice {
 	padding: 20px;
 	border-left: 5px solid $primaryColor;
+	position: relative;
 	&__actions {
 		padding: 15px 0 0 0;
 	}
@@ -39,19 +40,17 @@
 	}
 }
 
-.tm-wizard-dismiss {
-	vertical-align: middle;
-	display: inline-block;
-	margin: 0 0 0 30px;
-	font-size: 15px;
-	color: $defaultColor;
+.notice-dismiss {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	padding: 10px 15px 10px 21px;
+	font-size: 13px;
+	line-height: 1.23076923;
 	text-decoration: none;
-	border: none;
 	&:before {
-		content: "\f153";
-		font-family: dashicons;
-		display: inline-block;
-		padding: 0 2px 0 0;
-		vertical-align: text-bottom;
+		position: absolute;
+		top: 8px;
+		left: 0;
 	}
 }
