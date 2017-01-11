@@ -327,7 +327,7 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 				array(
 					'arg'     => 'memory_limit',
 					'_cb'     => array( $this, 'ini_get_int' ),
-					'rec'     => 128000,
+					'rec'     => 12800,
 					'units'   => 'Mb',
 					'name'    => esc_html__( 'Memory limit', 'tm-wizard' ),
 					'compare' => array( $this, 'val_compare' ),
@@ -342,7 +342,7 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 				),
 			);
 
-			$format = '<li class="tm-wizard-server__item%5$s">%1$s: %2$s%3$s&nbsp;&nbsp;<b>%4$s</b></li>';
+			$format = '<li class="tm-wizard-server__item%5$s">%1$s: %2$s%3$s &mdash; <b>%4$s</b></li>';
 			$result = '';
 
 			foreach ( $data as $prop ) {
