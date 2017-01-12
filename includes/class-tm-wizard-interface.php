@@ -327,7 +327,7 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 				array(
 					'arg'     => 'memory_limit',
 					'_cb'     => array( $this, 'ini_get_int' ),
-					'rec'     => 12800,
+					'rec'     => 128,
 					'units'   => 'Mb',
 					'name'    => esc_html__( 'Memory limit', 'tm-wizard' ),
 					'compare' => array( $this, 'val_compare' ),
