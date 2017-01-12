@@ -12,7 +12,7 @@
 	if ( $errors ) {
 		printf(
 			'<div class="tm-warning-notice">%s</div>',
-			esc_html__( 'Not all of your server parameters met requirements', 'tm-wizard' )
+			esc_html__( 'Not all of your server parameters met requirements. You can continue the installation process, but it will take more time and can probably drive to bugs.', 'tm-wizard' )
 		);
 	}
 ?>
