@@ -100,6 +100,7 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 			}
 
 			delete_transient( '_tribe_tickets_activation_redirect' );
+			delete_transient( '_tribe_events_activation_redirect' );
 
 			return true;
 		}
