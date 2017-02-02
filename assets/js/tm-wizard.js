@@ -8,7 +8,8 @@
 			progress: '.tm-wizard-progress__bar',
 			showResults: '.tm-wizard-install-results__trigger',
 			showPlugins: '.tm-wizard-skin-item__plugins-title',
-			loaderBtn: '[data-loader="true"]'
+			loaderBtn: '[data-loader="true"]',
+			start: '.start-install',
 		},
 
 		vars: {
@@ -26,6 +27,7 @@
 			$( document )
 				.on( 'click.tmWizard', tmWizard.css.showResults, tmWizard.showResults )
 				.on( 'click.tmWizard', tmWizard.css.showPlugins, tmWizard.showPlugins )
+				.on( 'click.tmWizard', tmWizard.css.start, tmWizard.startInstall )
 				.on( 'click.tmWizard', tmWizard.css.loaderBtn, tmWizard.showLoader );
 
 			if ( undefined !== settings.firstPlugin ) {
@@ -33,6 +35,25 @@
 				settings.firstPlugin.isFirst = true;
 				tmWizard.installPlugin( settings.firstPlugin );
 			}
+		},
+
+		startInstall: function() {
+
+			var $this     = $( this ),
+				$advanced = $( '.tm-wizard-advanced-install input[type="checkbox"]' ),
+				href      = $this.attr( 'href' );
+
+			if ( 0 === $advanced.length ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			if ( true === $advanced.is( ':checked' ) ) {
+				href += '&advanced-install=1';
+			}
+
+			window.location = href;
 		},
 
 		showLoader: function() {

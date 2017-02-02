@@ -149,29 +149,19 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 		 */
 		public function dispatch() {
 
-			$step = ! empty( $_GET['step'] ) ? intval( $_GET['step'] ) : 0;
+			$step = ! empty( $_GET['step'] ) ? $_GET['step'] : 0;
 
-			switch ( $step ) {
+			$dispatch = array(
+				'configure-plugins' => 'step-configure-plugins.php',
+				'0'                 => 'step-service-notice.php',
+				'1'                 => 'step-before-install.php',
+				'2'                 => 'step-select-type.php',
+				'3'                 => 'step-install.php',
+				'4'                 => 'step-after-install.php',
+			);
 
-				case 0:
-					tm_wizard()->get_template( 'step-service-notice.php' );
-					break;
-
-				case 1:
-					tm_wizard()->get_template( 'step-before-install.php' );
-					break;
-
-				case 2:
-					tm_wizard()->get_template( 'step-select-type.php' );
-					break;
-
-				case 3:
-					tm_wizard()->get_template( 'step-install.php' );
-					break;
-
-				case 4:
-					tm_wizard()->get_template( 'step-after-install.php' );
-					break;
+			if ( isset( $dispatch[ $step ] ) ) {
+				tm_wizard()->get_template( $dispatch[ $step ] );
 			}
 
 		}

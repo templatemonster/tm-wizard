@@ -213,7 +213,13 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		 * @return string
 		 */
 		public function get_page_link( $args = array() ) {
+
 			$args['page'] = $this->slug();
+
+			if ( isset( $_GET['advanced-install'] ) ) {
+				$args['advanced-install'] = esc_attr( $_GET['advanced-install'] );
+			}
+
 			return add_query_arg( $args, esc_url( admin_url( 'admin.php' ) ) );
 		}
 

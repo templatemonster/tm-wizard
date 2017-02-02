@@ -3,7 +3,9 @@
  * Template part for displaying advanced popup
  */
 
-$skin = tm_wizard_interface()->get_skin_data( 'slug' );
+$skin      = tm_wizard_interface()->get_skin_data( 'slug' );
+$next_step = isset( $_GET['advanced-install'] ) && '1' === $_GET['advanced-install'] ? 'configure-plugins' : 3;
+
 ?>
 <h2><?php esc_html_e( 'Demo Content Settings', 'tm-wizard' ); ?></h2>
 
@@ -27,9 +29,15 @@ $skin = tm_wizard_interface()->get_skin_data( 'slug' );
 
 		</label>
 	</div>
-	<input type="hidden" name="step" value="3">
+	<input type="hidden" name="step" value="<?php echo $next_step; ?>">
 	<input type="hidden" name="skin" value="<?php echo $skin; ?>">
 	<input type="hidden" name="page" value="<?php echo tm_wizard()->slug(); ?>">
+	<?php
+		if ( isset( $_GET['advanced-install'] ) ) {
+			$install = esc_attr( $_GET['advanced-install'] );
+			echo '<input type="hidden" name="advanced-install" value="' . $install . '">';
+		}
+	?>
 	<button class="btn btn-primary" data-wizard="confirm-install" data-loader="true" data-href=""><span class="text"><?php
 		esc_html_e( 'Next', 'tm-wizard' );
 	?></span><span class="tm-wizard-loader"><span class="tm-wizard-loader__spinner"></span></span></button>

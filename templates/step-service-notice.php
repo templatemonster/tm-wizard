@@ -16,7 +16,13 @@
 		);
 	}
 ?>
-<a href="<?php echo tm_wizard()->get_page_link( array( 'step' => 1 ) ); ?>" data-loader="true" class="btn btn-primary">
+<div class="tm-wizard-advanced-install">
+	<label>
+		<input type="checkbox" name="advanced-install" value="yes">
+		<?php esc_html_e( 'Advanced Install', 'tm-wizard' ); ?>
+	</label>
+</div>
+<a href="<?php echo tm_wizard()->get_page_link( array( 'step' => 1 ) ); ?>" data-loader="true" class="btn btn-primary start-install">
 	<span class="text"><?php esc_html_e( 'Next', 'tm-wizard' ); ?></span>
 	<span class="tm-wizard-loader"><span class="tm-wizard-loader__spinner"></span></span>
 </a>
