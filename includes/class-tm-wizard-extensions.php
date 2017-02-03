@@ -35,8 +35,26 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_bbp_redirect' ) );
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_booked_redirect' ) );
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_tribe_redirect' ) );
+			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_woo_redirect' ) );
 
 			add_filter( 'tm_wizard_send_install_data', array( $this, 'add_multi_arg' ), 10, 2 );
+		}
+
+		/**
+		 * Prevent redirect after WooCommerce activation.
+		 *
+		 * @param  string $plugin Plugin slug.
+		 * @return bool
+		 */
+		public function prevent_woo_redirect( $plugin ) {
+
+			if ( 'woocommerce' !== $plugin['slug'] ) {
+				return false;
+			}
+
+			delete_transient( '_wc_activation_redirect' );
+
+			return true;
 		}
 
 		/**
