@@ -118,6 +118,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 
 				delete_option( 'tm_wizard_show_notice' );
 				delete_option( 'tm_active_skin' );
+				delete_option( tm_wizard_data()->advances_plugins );
 				add_option( 'tm_active_skin', array( 'skin' => $skin, 'type' => $type ), '', false );
 
 				$data = array(

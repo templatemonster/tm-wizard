@@ -34,6 +34,47 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		private $skin_plugins = array();
 
 		/**
+		 * Option for advanced plugins.
+		 *
+		 * @var string
+		 */
+		public $advances_plugins = 'tm_wizard_stored_plugins';
+
+		/**
+		 * Constructor for the class
+		 */
+		public function __construct() {
+			add_action( 'wp_ajax_tm_wizard_store_plugins', array( $this, 'store_plugins' ) );
+		}
+
+		/**
+		 * Store plugins for advanced installation
+		 *
+		 * @return void
+		 */
+		public function store_plugins() {
+
+			if ( empty( $_REQUEST['plugins'] ) ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Plugins array are empty', 'tm-wizard' )
+				) );
+			}
+
+			$stored_plugins = get_option( $this->advances_plugins );
+
+			if ( ! empty( $stored_plugins ) ) {
+				delete_option( $this->advances_plugins );
+			}
+
+			$plugins = $_REQUEST['plugins'];
+			array_walk( $plugins, 'esc_attr' );
+
+			add_option( $this->advances_plugins, $plugins, '', false );
+
+			wp_send_json_success();
+		}
+
+		/**
 		 * Returns information about plugin.
 		 *
 		 * @param  string $plugin Plugin slug.
@@ -59,6 +100,15 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		 * @return array
 		 */
 		public function get_skin_plugins( $skin = null ) {
+
+			$stored = get_option( $this->advances_plugins );
+
+			if ( ! empty( $stored ) ) {
+				return array(
+					'lite' => $stored,
+					'full' => $stored,
+				);
+			}
 
 			if ( ! empty( $this->skin_plugins[ $skin ] ) ) {
 				return $this->skin_plugins[ $skin ];
@@ -201,6 +251,37 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		}
 
 		/**
+		 * Get all registered plugins list
+		 *
+		 * @return array
+		 */
+		public function get_all_plugins_list() {
+			$registered = tm_wizard_settings()->get( array( 'plugins' ) );
+			return $registered;
+		}
+
+		/**
+		 * Check if is current skin plugin.
+		 *
+		 * @param  string $slug Plugin slug to check.
+		 * @return boolean
+		 */
+		public function is_current_skin_plugin( $slug ) {
+
+			$skin = isset( $_REQUEST['skin'] ) ? esc_attr( $_REQUEST['skin'] ) : false;
+			$type = isset( $_REQUEST['type'] ) ? esc_attr( $_REQUEST['type'] ) : false;
+
+			if ( ! $skin || ! $type ) {
+				return false;
+			}
+
+			$data    = $this->get_skin_plugins( $skin );
+			$plugins = $data[ $type ];
+
+			return in_array( $slug, $plugins );
+		}
+
+		/**
 		 * Returns the instance.
 		 *
 		 * @since  1.0.0
@@ -226,3 +307,5 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 function tm_wizard_data() {
 	return TM_Wizard_Data::get_instance();
 }
+
+tm_wizard_data();

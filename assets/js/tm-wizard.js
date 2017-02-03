@@ -10,6 +10,7 @@
 			showPlugins: '.tm-wizard-skin-item__plugins-title',
 			loaderBtn: '[data-loader="true"]',
 			start: '.start-install',
+			storePlugins: '.store-plugins'
 		},
 
 		vars: {
@@ -28,6 +29,7 @@
 				.on( 'click.tmWizard', tmWizard.css.showResults, tmWizard.showResults )
 				.on( 'click.tmWizard', tmWizard.css.showPlugins, tmWizard.showPlugins )
 				.on( 'click.tmWizard', tmWizard.css.start, tmWizard.startInstall )
+				.on( 'click.tmWizard', tmWizard.css.storePlugins, tmWizard.storePlugins )
 				.on( 'click.tmWizard', tmWizard.css.loaderBtn, tmWizard.showLoader );
 
 			if ( undefined !== settings.firstPlugin ) {
@@ -35,6 +37,32 @@
 				settings.firstPlugin.isFirst = true;
 				tmWizard.installPlugin( settings.firstPlugin );
 			}
+		},
+
+		storePlugins: function() {
+
+			var $this   = $( this ),
+				href    = $this.attr( 'href' ),
+				plugins = [];
+
+			event.preventDefault();
+
+			$( '.tm-config-list input[type="checkbox"]:checked' ).each( function( index, el ) {
+				plugins.push( $( this ).attr( 'name' ) );
+			} );
+
+			$.ajax({
+				url: ajaxurl,
+				type: 'get',
+				dataType: 'json',
+				data: {
+					action: 'tm_wizard_store_plugins',
+					plugins: plugins
+				}
+			}).done( function( response ) {
+				window.location = href;
+			});
+
 		},
 
 		startInstall: function() {

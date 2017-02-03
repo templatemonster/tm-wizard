@@ -238,9 +238,10 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		 * Get plugin template
 		 *
 		 * @param  string $template Template name.
+		 * @param  mixed  $data     Additional data to pass into template
 		 * @return void
 		 */
-		public function get_template( $template ) {
+		public function get_template( $template, $data = false ) {
 
 			$file = locate_template( 'tm-wizard/' . $template );
 
