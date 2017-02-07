@@ -220,6 +220,12 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				$args['advanced-install'] = esc_attr( $_GET['advanced-install'] );
 			}
 
+			foreach ( array( 'skin', 'type' ) as $key ) {
+				if ( isset( $_GET[ $key ] ) && empty( $args[ $key ] ) ) {
+					$args[ $key ] = esc_attr( $_GET[ $key ] );
+				}
+			}
+
 			return add_query_arg( $args, esc_url( admin_url( 'admin.php' ) ) );
 		}
 

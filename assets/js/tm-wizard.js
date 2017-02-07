@@ -65,7 +65,7 @@
 
 		},
 
-		startInstall: function() {
+		startInstall: function( event ) {
 
 			var $this     = $( this ),
 				$advanced = $( '.tm-wizard-advanced-install input[type="checkbox"]' ),
