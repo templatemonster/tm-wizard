@@ -137,7 +137,7 @@ class TM_Wizard_Plugin_Upgrader extends Plugin_Upgrader {
 
 		/** Return false if installation result isn't an array or the destination name isn't set */
 		if ( ! is_array( $this->result ) ) {
-			return false;
+			return $this->maybe_get_data_from_error();
 		}
 
 		if ( empty( $this->result['destination_name'] ) ) {
@@ -155,6 +155,40 @@ class TM_Wizard_Plugin_Upgrader extends Plugin_Upgrader {
 
 		return $this->result['destination_name'] . '/' . $pluginfiles[0];
 
+	}
+
+	/**
+	 * Try to get plugin data from error
+	 *
+	 * @return string|bool
+	 */
+	public function maybe_get_data_from_error() {
+
+		if ( ! isset( $this->skin->result ) || ! is_wp_error( $this->skin->result ) ) {
+			return false;
+		}
+
+		if ( ! isset( $this->skin->result->error_data['folder_exists'] ) ) {
+			return false;
+		}
+
+		$path = $this->skin->result->error_data['folder_exists'];
+
+		if ( ! $path ) {
+			return false;
+		}
+
+		$plugin      = basename( $path );
+		$plugin_data = get_plugins( '/' . $plugin );
+
+		if ( empty( $plugin_data ) ) {
+			return false;
+		}
+
+		/** Assume the requested plugin is the first in the list */
+		$pluginfiles = array_keys( $plugin_data );
+
+		return $plugin . '/' . $pluginfiles[0];
 	}
 
 }
