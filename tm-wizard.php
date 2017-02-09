@@ -85,14 +85,27 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				return;
 			}
 
-			add_action( 'plugins_loaded',         array( $this, 'lang' ), 2 );
-			add_action( 'init',                   array( $this, 'init' ) );
-			add_action( 'admin_init',             array( $this, 'dismiss_notice' ) );
-			add_action( 'admin_head',             array( $this, 'notice_css' ) );
-			add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue_assets' ) );
+			add_action( 'after_setup_theme',     array( $this, 'preload' ) );
+			add_action( 'plugins_loaded',        array( $this, 'lang' ), 2 );
+			add_action( 'init',                  array( $this, 'init' ) );
+			add_action( 'admin_init',            array( $this, 'dismiss_notice' ) );
+			add_action( 'admin_head',            array( $this, 'notice_css' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
 			register_activation_hook( __FILE__,   array( $this, '_activation' ) );
 			register_deactivation_hook( __FILE__, array( $this, '_deactivation' ) );
+
+		}
+
+		/**
+		 * Preload required files.
+		 *
+		 * @return void
+		 */
+		public function preload() {
+			require_once $this->path( 'includes/class-tm-wizard-settings.php' );
+			require_once $this->path( 'includes/class-tm-wizard-extensions.php' );
 		}
 
 		/**
@@ -147,8 +160,6 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		 * @return void
 		 */
 		public function init() {
-
-			require_once $this->path( 'includes/class-tm-wizard-settings.php' );
 
 			if ( ! tm_wizard_settings()->get_manifest() ) {
 				add_action( 'admin_notices', array( $this, 'manifest_notice' ) );
@@ -270,7 +281,6 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 			require_once $this->path( 'includes/class-tm-wizard-interface.php' );
 			require_once $this->path( 'includes/class-tm-wizard-installer.php' );
 			require_once $this->path( 'includes/class-tm-wizard-data.php' );
-			require_once $this->path( 'includes/class-tm-wizard-extensions.php' );
 		}
 
 		/**
@@ -326,15 +336,63 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 			}
 
 			if ( ! $this->is_wizard() ) {
-
-				ob_start();
-				include $this->path( 'assets/css/notice.css' );
-				$notice = ob_get_clean();
-				printf( '<style type="text/css">%s</style>', $notice );
-
+				$this->print_inline_css( 'notice.css' );
 				return;
 			}
 
+		}
+
+		/**
+		 * Print inline CSS file
+		 *
+		 * @param  string $file File name.
+		 * @return void
+		 */
+		public function print_inline_css( $file ) {
+
+			$css = $this->path( 'assets/css/' . $file );
+
+			if ( ! file_exists( $css ) ) {
+				return;
+			}
+
+			ob_start();
+			include $css;
+			$notice = ob_get_clean();
+			printf( '<style type="text/css">%s</style>', $notice );
+		}
+
+		/**
+		 * Register plugin assets
+		 *
+		 * @return void
+		 */
+		public function register_assets() {
+
+			$handle = 'tm-wizard';
+
+			wp_register_script(
+				$handle,
+				$this->url( 'assets/js/tm-wizard.js' ),
+				array( 'wp-util' ),
+				'170208',
+				true
+			);
+
+			wp_register_script(
+				$handle . '-dashboard',
+				$this->url( 'assets/js/tm-wizard-dashboard.js' ),
+				array( 'jquery' ),
+				'170208',
+				true
+			);
+
+			wp_register_style(
+				$handle,
+				$this->url( 'assets/css/tm-wizard.css' ),
+				false,
+				'170208'
+			);
 		}
 
 		/**
@@ -367,9 +425,12 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				$settings['totalPlugins'] = tm_wizard_data()->get_plugins_count( $skin, $type );
 			}
 
-			wp_enqueue_script( $handle, $this->url( 'assets/js/tm-wizard.js' ), array( 'wp-util' ), '20170103', true );
-			wp_enqueue_style( $handle, $this->url( 'assets/css/tm-wizard.css' ), false, '20170109' );
+			wp_enqueue_script( $handle );
+			wp_enqueue_style( $handle );
 
+			/**
+			 * Hook fires on wizard assets enqueue
+			 */
 			do_action( 'tm_wizard_enqueue_assets' );
 
 			wp_localize_script( $handle, 'tmWizardSettings', apply_filters( 'tm_wizard_js_settings', $settings ) );

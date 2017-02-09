@@ -53,6 +53,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		 */
 		function __construct() {
 			add_action( 'wp_ajax_tm_wizard_install_plugin', array( $this, 'install_plugin' ) );
+			add_action( 'wp_ajax_tm_wizard_process_single_plugin', array( $this, 'process_single_plugin' ) );
 		}
 
 		/**
@@ -223,12 +224,110 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 		}
 
 		/**
+		 * Process single plugins installation or activation
+		 *
+		 * @return void
+		 */
+		public function process_single_plugin() {
+
+			$action = isset( $_REQUEST['pluginAction'] ) ? esc_attr( $_REQUEST['pluginAction'] ) : false;
+
+			if ( 'install' === $action ) {
+				$this->install_single_plugin();
+			}
+
+			if ( 'activate' === $action ) {
+				$this->activate_single_plugin();
+			}
+
+			wp_send_json_error( array(
+				'message' => esc_html__( 'Action not provided', 'tm-wizard' ),
+			) );
+
+		}
+
+		/**
+		 * Process single plugin installation
+		 *
+		 * @return void
+		 */
+		public function install_single_plugin() {
+
+			$slug = isset( $_REQUEST['slug'] ) ? esc_attr( $_REQUEST['slug'] ) : false;
+
+			if ( ! $slug ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Plugin slug not provided', 'tm-wizard' ),
+				) );
+			}
+
+			$this->do_plugin_install( tm_wizard_data()->get_plugin_data( $slug ), false );
+
+			$result_type = isset( $this->installer->skin->result_type )
+								? $this->installer->skin->result_type
+								: 'success';
+
+			if ( 'success' === $result_type ) {
+
+				ob_start();
+				tm_wizard_ext()->single_plugin_item( $slug, tm_wizard_data()->get_plugin_data( $slug ) );
+				$item = ob_get_clean();
+
+				wp_send_json_success( array(
+					'message' => $item,
+				) );
+			} else {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Installation failed', 'tm-wizard' ),
+					'log'     => $this->log
+				) );
+			}
+
+		}
+
+		/**
+		 * Process single plugin activation
+		 *
+		 * @return void
+		 */
+		public function activate_single_plugin() {
+
+			$path = isset( $_REQUEST['path'] ) ? esc_attr( $_REQUEST['path'] ) : false;
+			$slug = isset( $_REQUEST['slug'] ) ? esc_attr( $_REQUEST['slug'] ) : false;
+
+			if ( ! $path || ! $slug ) {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Plugin data not provided', 'tm-wizard' ),
+				) );
+			}
+
+			$activate = $this->activate_plugin( $path );
+
+			if ( ! is_wp_error( $activate ) ) {
+
+				ob_start();
+				tm_wizard_ext()->single_plugin_item( $slug, tm_wizard_data()->get_plugin_data( $slug ) );
+				$item = ob_get_clean();
+
+				wp_send_json_success( array(
+					'message' => $item,
+				) );
+			} else {
+				wp_send_json_error( array(
+					'message' => esc_html__( 'Can\'t perform plugin activation. Please try again later', 'tm-wizard' ),
+				) );
+			}
+
+		}
+
+		/**
 		 * Process plugin installation.
 		 *
-		 * @param  array $plugin Plugin data.
+		 * @param  array $plugin   Plugin data.
+		 * @param  bool  $activate Perform plugin activation or not.
 		 * @return bool
 		 */
-		public function do_plugin_install( $plugin = array() ) {
+		public function do_plugin_install( $plugin = array(), $activate = true ) {
 
 			/**
 			 * Hook fires before plugin installation.
@@ -265,7 +364,10 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			 */
 			do_action( 'tm_wizard_after_plugin_install', $plugin );
 
-			$this->activate_plugin( $plugin_activate, $plugin['slug'] );
+
+			if ( false !== $activate ) {
+				$this->activate_plugin( $plugin_activate, $plugin['slug'] );
+			}
 
 			/**
 			 * Hook fires after plugin activation.
@@ -312,11 +414,6 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			}
 
 			return null;
-		}
-
-		public function test() {
-			$this->do_plugin_install( tm_wizard_data()->get_plugin_data( 'cherry-services-list' ) );
-			die();
 		}
 
 		/**

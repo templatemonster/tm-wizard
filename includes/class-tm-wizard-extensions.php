@@ -38,6 +38,103 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_woo_redirect' ) );
 
 			add_filter( 'tm_wizard_send_install_data', array( $this, 'add_multi_arg' ), 10, 2 );
+
+			add_action( 'tm_dashboard_add_section', array( $this, 'add_dashboard_plugins_section' ), 25, 2 );
+			add_action( 'admin_head', array( $this, 'maybe_print_dashboard_css' ), 99 );
+		}
+
+		/**
+		 * Maybe print dashboard CSS file
+		 *
+		 * @return void
+		 */
+		public function maybe_print_dashboard_css() {
+
+			if ( ! isset( $_GET['page'] ) || 'tm-dashboard' !== $_GET['page'] ) {
+				return;
+			}
+
+			tm_wizard()->print_inline_css( 'dashboard.css' );
+			wp_enqueue_script( 'tm-wizard-dashboard' );
+
+		}
+
+		/**
+		 * Adds required theme plugins on dashboard page.
+		 *
+		 * @param object $builder   Builder module instance.
+		 * @param object $dashboard Dashboard plugin instance.
+		 */
+		public function add_dashboard_plugins_section( $builder, $dashboard ) {
+
+			$plugins = tm_wizard_settings()->get( array( 'plugins' ) );
+
+			if ( empty( $plugins ) ) {
+				return;
+			}
+
+			ob_start();
+
+			foreach ( $plugins as $slug => $plugin ) {
+				$this->single_plugin_item( $slug, $plugin );
+			}
+
+			$content = ob_get_clean();
+
+			$builder->register_section(
+				array(
+					'tm-wizard' => array(
+						'title' => esc_html__( 'Recommended plugins', 'tm-dashboard' ),
+						'class' => 'tm-dashboard-section tm-dashboard-section--tm-wizard',
+						'view'  => $dashboard->plugin_dir( 'admin/views/section.php' ),
+					),
+				)
+			);
+
+			$builder->register_html(
+				array(
+					'tm-wizard-content' => array(
+						'parent' => 'tm-wizard',
+						'html'   => $content,
+					),
+				)
+			);
+
+		}
+
+		/**
+		 * Print single plugin item for dashbaord list.
+		 *
+		 * @param  string $slug   Plugins slug.
+		 * @param  array  $plugin Plugins data.
+		 * @return void
+		 */
+		public function single_plugin_item( $slug, $plugin ) {
+
+			$plugin_data = get_plugins( '/' . $slug );
+			$pluginfiles = array_keys( $plugin_data );
+			$installed   = true;
+			$activated   = false;
+			$plugin_path = null;
+
+			if ( empty( $pluginfiles ) ) {
+				$installed = false;
+			} else {
+				$plugin_path = $slug . '/' . $pluginfiles[0];
+				$activated   = is_plugin_active( $plugin_path );
+			}
+
+			$data = array_merge(
+				array(
+					'slug'       => $slug,
+					'pluginpath' => $plugin_path,
+					'installed'  => $installed,
+					'activated'  => $activated,
+				),
+				$plugin
+			);
+
+			tm_wizard()->get_template( 'dashboard/item.php', $data );
 		}
 
 		/**
