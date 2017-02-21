@@ -321,6 +321,13 @@
 	}
 }
 
+.plugins-set {
+	padding-top: 30px;
+	&:first-child {
+		padding-top: 0;
+	}
+}
+
 .tm-wizard-install-results {
 	&__trigger {
 		position: absolute;

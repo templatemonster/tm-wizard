@@ -26,9 +26,20 @@
 		border: 1px solid $primaryColor;
 		border-radius: 5px;
 		position: relative;
+		outline: none;
 		&:hover {
-			color: $primaryColorAlt;
-			border-color: $primaryColorAlt;
+			box-shadow: 0 0 0 1px $primaryColor inset;
+		}
+		&.wizard-plugin__activate {
+			color: $successColor;
+			border-color: $successColor;
+			.tm-wizard-loader__spinner {
+				border-color: $successColor;
+				border-top-color: #fff;
+			}
+			&:hover {
+				box-shadow: 0 0 0 1px $successColor inset;
+			}
 		}
 		&.in-progress {
 			.text {

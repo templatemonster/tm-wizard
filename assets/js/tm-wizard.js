@@ -28,7 +28,6 @@
 			$( document )
 				.on( 'click.tmWizard', tmWizard.css.showResults, tmWizard.showResults )
 				.on( 'click.tmWizard', tmWizard.css.showPlugins, tmWizard.showPlugins )
-				.on( 'click.tmWizard', tmWizard.css.start, tmWizard.startInstall )
 				.on( 'click.tmWizard', tmWizard.css.storePlugins, tmWizard.storePlugins )
 				.on( 'click.tmWizard', tmWizard.css.loaderBtn, tmWizard.showLoader );
 
@@ -63,25 +62,6 @@
 				window.location = href;
 			});
 
-		},
-
-		startInstall: function( event ) {
-
-			var $this     = $( this ),
-				$advanced = $( '.tm-wizard-advanced-install input[type="checkbox"]' ),
-				href      = $this.attr( 'href' );
-
-			if ( 0 === $advanced.length ) {
-				return;
-			}
-
-			event.preventDefault();
-
-			if ( true === $advanced.is( ':checked' ) ) {
-				href += '&advanced-install=1';
-			}
-
-			window.location = href;
 		},
 
 		showLoader: function() {
