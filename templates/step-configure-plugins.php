@@ -30,6 +30,7 @@
 	if ( ! empty( $required_plugins ) ) {
 		echo '<div class="plugins-set">';
 		echo '<h4>' . esc_html__( 'Required Plugins', 'tm-wizard' ) . '</h4>';
+		echo '<div class="plugins-set__desc">' . esc_html__( 'The minimum set of service plugins for your theme installation is set by default.', 'tm-wizard' ) . '</div>';
 
 		foreach ( $required_plugins as $slug => $plugin_data ) {
 			tm_wizard()->get_template( 'configure-plugins/item.php', array_merge(
@@ -43,6 +44,7 @@
 	if ( ! empty( $recommended_plugins ) ) {
 		echo '<div class="plugins-set">';
 		echo '<h4>' . esc_html__( 'Recommended Plugins', 'tm-wizard' ) . '</h4>';
+		echo '<div class="plugins-set__desc">' . esc_html__( 'The recommended set of basic plugins to display the template’s pages. The best option for your site\'s future configuration. If you will not install one or more plugins from this list, the specific sections of the template, for which these plugins are responsible, will not be displayed.', 'tm-wizard' ) . '</div>';
 
 		foreach ( $recommended_plugins as $slug => $plugin_data ) {
 			tm_wizard()->get_template( 'configure-plugins/item.php', array_merge(
@@ -56,6 +58,7 @@
 	if ( ! empty( $rest_plugins ) ) {
 		echo '<div class="plugins-set">';
 		echo '<h4>' . esc_html__( 'Registered Plugins', 'tm-wizard' ) . '</h4>';
+		echo '<div class="plugins-set__desc">' . esc_html__( 'The full list of plugins available for a template installation is recommended if you want to get additional functionality to your theme.', 'tm-wizard' ) . '</div>';
 
 		foreach ( $rest_plugins as $slug => $plugin_data ) {
 			tm_wizard()->get_template( 'configure-plugins/item.php', array_merge(

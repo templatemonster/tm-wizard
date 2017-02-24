@@ -326,6 +326,9 @@
 	&:first-child {
 		padding-top: 0;
 	}
+	&__desc {
+		padding: 0 0 20px;
+	}
 }
 
 .tm-wizard-install-results {
