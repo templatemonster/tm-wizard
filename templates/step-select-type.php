@@ -16,17 +16,25 @@ $next_step = isset( $_GET['advanced-install'] ) && '1' === $_GET['advanced-insta
 		<label class="tm-wizard-type__item">
 			<input type="radio" name="type" value="lite" checked>
 			<span class="tm-wizard-type__item-mask"></span>
-			<span class="tm-wizard-type__item-label"><?php
-				esc_html_e( 'Lite Install', 'tm-wizard' );
-			?></span>
+			<span class="tm-wizard-type__item-label">
+				<span class="tm-wizard-type__item-label-title"><?php
+					esc_html_e( 'Lite Install', 'tm-wizard' );
+				?></span>
+				<span class="tm-wizard-type__item-label-desc"><?php
+					esc_html_e( 'Lite version sample data includes the optimal amount of demo data with a smaller number of blog posts and images and fits for acquaintance with the template. It is recommended to install the Lite sample data version if you use an entry-level hosting plan.', 'tm-wizard' );
+				?></span>
+			</span>
 		</label>
 		<label class="tm-wizard-type__item">
 			<input type="radio" name="type" value="full">
 			<span class="tm-wizard-type__item-mask"></span>
-			<span class="tm-wizard-type__item-label"><?php
-				esc_html_e( 'Full Install', 'tm-wizard' );
-			?></span>
-
+			<span class="tm-wizard-type__item-label"><span class="tm-wizard-type__item-label-title"><?php
+					esc_html_e( 'Full Install', 'tm-wizard' );
+				?></span>
+				<span class="tm-wizard-type__item-label-desc"><?php
+					esc_html_e( 'Full version of sample data contains the entire amount of available demo data used in the template, including all posts, products, reviews, images and more. It is recommended to install a Full sample data version if you use premium hosting plans, dedicated or VPS servers.', 'tm-wizard' );
+				?></span>
+			</span>
 		</label>
 	</div>
 	<input type="hidden" name="step" value="<?php echo $next_step; ?>">
