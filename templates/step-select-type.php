@@ -9,8 +9,7 @@ $next_step = isset( $_GET['advanced-install'] ) && '1' === $_GET['advanced-insta
 ?>
 <h2><?php esc_html_e( 'Demo Content Settings', 'tm-wizard' ); ?></h2>
 
-<?php esc_html_e( 'Each theme comes with lite and full version of demo content. The number of posts and plugins may affect your site speed. We recommend importing lite version of demo content if you are running shared inexpensive server.', 'tm-wizard' ); ?><br><br>
-<?php esc_html_e( 'Full version of demo content is recommended for dedicated servers, VPS servers and premium shared hosing plans.', 'tm-wizard' ); ?>
+<?php esc_html_e( 'Each theme comes with lite and full version of demo content. The number of posts and plugins may affect your site speed. We recommend importing lite version of demo content if you are running shared inexpensive server.', 'tm-wizard' ); ?>
 <form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
 	<div class="tm-wizard-type__select">
 		<label class="tm-wizard-type__item">

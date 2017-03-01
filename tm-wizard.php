@@ -391,7 +391,7 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 				$handle,
 				$this->url( 'assets/css/tm-wizard.css' ),
 				false,
-				'170301'
+				'170302'
 			);
 		}
 

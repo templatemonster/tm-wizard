@@ -89,7 +89,7 @@
 			border: 1px solid $bordersColor;
 			border-radius: 5px;
 			display: block;
-			padding: 20px 20px 20px 44px;
+			padding: 20px 20px 20px 47px;
 			margin: 0 0 10px;
 			font-size: 14px;
 			color: $textColorAlt;
@@ -103,7 +103,7 @@
 			input[type="radio"] {
 				position: absolute;
 				left: 20px;
-				top: 26px;
+				top: 27px;
 			}
 
 			&-mask {
@@ -120,10 +120,11 @@
 			&-label {
 				&-title {
 					display: block;
-					//font-weight: bold;
+					padding: 0 0 5px;
 				}
 				&-desc {
 					color: $textColor;
+					font-size: 13px;
 				}
 			}
 			&:hover .tm-wizard-type__item-mask,
