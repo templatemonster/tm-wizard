@@ -57,7 +57,7 @@
 
 	if ( ! empty( $rest_plugins ) ) {
 		echo '<div class="plugins-set">';
-		echo '<h4>' . esc_html__( 'Registered Plugins', 'tm-wizard' ) . '</h4>';
+		echo '<h4>' . esc_html__( 'Extra Plugins', 'tm-wizard' ) . '</h4>';
 		echo '<div class="plugins-set__desc">' . esc_html__( 'The full list of plugins available for a template installation is recommended if you want to get additional functionality to your theme.', 'tm-wizard' ) . '</div>';
 
 		foreach ( $rest_plugins as $slug => $plugin_data ) {
