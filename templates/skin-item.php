@@ -21,9 +21,7 @@ $skin = tm_wizard_interface()->get_skin_data( 'slug' );
 			</div>
 		</div>
 		<div class="tm-wizard-skin-item__actions">
-			<a href="<?php echo tm_wizard()->get_page_link( array( 'step' => 2, 'skin' => $skin ) ) ?>" data-loader="true" class="btn btn-primary"><span class="text"><?php
-				esc_html_e( 'Select Skin', 'tm-wizard' );
-			?></span><span class="tm-wizard-loader"><span class="tm-wizard-loader__spinner"></span></span></a>
+			<?php echo tm_wizard_interface()->get_install_skin_button( $skin ); ?>
 			<a href="<?php echo tm_wizard_interface()->get_skin_data( 'demo' ) ?>" data-loader="true" class="btn btn-default"><span class="text"><?php
 				esc_html_e( 'View Demo', 'tm-wizard' );
 			?></span><span class="tm-wizard-loader"><span class="tm-wizard-loader__spinner"></span></span></a>

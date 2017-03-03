@@ -401,6 +401,30 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 		}
 
 		/**
+		 * Returns start skin installation button HTML.
+		 *
+		 * @param  string $skin Skin slug.
+		 * @return string
+		 */
+		public function get_install_skin_button( $skin = '' ) {
+
+			$url    = tm_wizard()->get_page_link( array( 'step' => 2, 'skin' => $skin ) );
+			$label  = esc_html__( 'Select Skin', 'tm-wizard' );
+			$format = '<a href="%1$s" data-loader="true" class="btn btn-primary"><span class="text">%2$s</span><span class="tm-wizard-loader"><span class="tm-wizard-loader__spinner"></span></span></a>';
+
+			if ( tm_wizard_data()->is_single_skin_theme() || tm_wizard_data()->is_single_type_skin( $skin ) ) {
+				$label  = esc_html__( 'Start Install', 'tm-wizard' );
+			}
+
+			if ( tm_wizard_data()->is_single_type_skin( $skin ) ) {
+				$next_step = isset( $_GET['advanced-install'] ) && '1' === $_GET['advanced-install'] ? 'configure-plugins' : 3;
+				$url = tm_wizard()->get_page_link( array( 'step' => $next_step, 'skin' => $skin, 'type' => 'full' ) );
+			}
+
+			return sprintf( $format, $url, $label );
+		}
+
+		/**
 		 * Returns the instance.
 		 *
 		 * @since  1.0.0

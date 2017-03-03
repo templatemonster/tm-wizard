@@ -261,6 +261,27 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		}
 
 		/**
+		 * Is single skin or multi skin theme
+		 *
+		 * @return boolean
+		 */
+		public function is_single_skin_theme() {
+			$skins = tm_wizard_settings()->get( array( 'skins', 'advanced' ) );
+			return 2 > count( $skins );
+		}
+
+		/**
+		 * Returns true if passed skin has only full installation type.
+		 *
+		 * @param  string  $skin Skin slug.
+		 * @return boolean
+		 */
+		public function is_single_type_skin( $skin = '' ) {
+			$skin_data = tm_wizard_settings()->get( array( 'skins', 'advanced', $skin ) );
+			return empty( $skin_data['lite'] );
+		}
+
+		/**
 		 * Check if is current skin plugin.
 		 *
 		 * @param  string $slug Plugin slug to check.
