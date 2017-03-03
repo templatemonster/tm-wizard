@@ -41,6 +41,29 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 
 			add_action( 'tm_dashboard_add_section', array( $this, 'add_dashboard_plugins_section' ), 25, 2 );
 			add_action( 'admin_head', array( $this, 'maybe_print_dashboard_css' ), 99 );
+
+			// Booked somitemes not processed correctly and still redirect so pervent it hard
+			add_filter( 'pre_transient__booked_welcome_screen_activation_redirect', array( $this, 'hard_prevent_booked_redirect' ), 10, 2 );
+		}
+
+		/**
+		 * Hard prevent booked redirect
+		 *
+		 * @param  bool $pre   Pre-get value.
+		 * @param  bool $value Default transient value.
+		 * @return mixed
+		 */
+		public function hard_prevent_booked_redirect( $pre, $value ) {
+
+			if ( isset( $_REQUEST['action'] ) && 'tm_wizard_install_plugin' === $_REQUEST['action'] ) {
+				return null;
+			}
+
+			if ( isset( $_GET['page'] ) && tm_wizard()->slug() === $_GET['page'] ) {
+				return null;
+			}
+
+			return $pre;
 		}
 
 		/**
