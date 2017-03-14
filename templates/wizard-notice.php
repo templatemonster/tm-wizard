@@ -2,10 +2,12 @@
 /**
  * Wizard notice template.
  */
+
+$theme = tm_wizard_settings()->get( array( 'texts', 'theme-name' ) );
 ?>
 <div class="tm-wizard-notice notice">
 	<div class="tm-wizard-notice__content"><?php
-		printf( esc_html__( 'This wizard will help you to select skin, install plugins and import demo data for your %s theme. To start the install click the button below!', 'tm-wizard' ), '<b>Monstroid&sup2;</b>' );
+		printf( esc_html__( 'This wizard will help you to select skin, install plugins and import demo data for your %s theme. To start the install click the button below!', 'tm-wizard' ), '<b>' . $theme . '</b>' );
 	?></div>
 	<div class="tm-wizard-notice__actions">
 		<a class="tm-wizard-btn" href="<?php echo tm_wizard()->get_page_link(); ?>"><?php

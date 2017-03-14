@@ -35,6 +35,13 @@ if ( ! class_exists( 'TM_Wizard_Settings' ) ) {
 		private $manifest = null;
 
 		/**
+		 * Manifest defaults
+		 *
+		 * @var array
+		 */
+		private $defaults = null;
+
+		/**
 		 * Get settings from array.
 		 *
 		 * @param  array  $settings Settings trail to get.
@@ -91,11 +98,42 @@ if ( ! class_exists( 'TM_Wizard_Settings' ) ) {
 			include $file;
 
 			$this->manifest = array(
-				'plugins' => isset( $plugins ) ? $plugins : false,
-				'skins'   => isset( $skins )   ? $skins   : false,
+				'plugins' => isset( $plugins ) ? $plugins : $this->get_defaults( 'plugins' ),
+				'skins'   => isset( $skins )   ? $skins   : $this->get_defaults( 'skins' ),
+				'texts'   => isset( $texts )   ? $texts   : $this->get_defaults( 'texts' ),
 			);
 
 			return $this->manifest;
+		}
+
+		/**
+		 * Get wizard defaults
+		 *
+		 * @param  string $part What part of manifest to get (optional - if empty return all)
+		 * @return array
+		 */
+		public function get_defaults( $part = null ) {
+
+			if ( null === $this->defaults ) {
+				include tm_wizard()->path( 'includes/manifest/tm-wizard-manifest.php' );
+
+				$this->defaults = array(
+					'plugins' => $plugins,
+					'skins'   => $skins,
+					'texts'   => $texts,
+				);
+
+			}
+
+			if ( ! $part ) {
+				return $this->defaults;
+			}
+
+			if ( isset( $this->defaults[ $part ] ) ) {
+				return $this->defaults[ $part ];
+			}
+
+			return array();
 		}
 
 		/**
