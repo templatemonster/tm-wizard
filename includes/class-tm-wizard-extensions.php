@@ -39,11 +39,42 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 
 			add_filter( 'tm_wizard_send_install_data', array( $this, 'add_multi_arg' ), 10, 2 );
 
+			add_filter( 'ttw_success_redirect_url', array( $this, 'set_theme_wizard_success_redirect' ) );
+
 			add_action( 'tm_dashboard_add_section', array( $this, 'add_dashboard_plugins_section' ), 25, 2 );
 			add_action( 'admin_head', array( $this, 'maybe_print_dashboard_css' ), 99 );
 
 			// Booked somitemes not processed correctly and still redirect so pervent it hard
 			add_filter( 'pre_transient__booked_welcome_screen_activation_redirect', array( $this, 'hard_prevent_booked_redirect' ), 10, 2 );
+		}
+
+		/**
+		 * Set theme wizard success redirect.
+		 *
+		 * @param string|bool $redirect Redirect
+		 */
+		public function set_theme_wizard_success_redirect( $redirect ) {
+
+			$redirect = tm_wizard()->get_page_link( array( 'step' => 1, 'advanced-install' => 1 ) );
+			$skin     = false;
+
+			if ( tm_wizard_data()->is_single_skin_theme() ) {
+				$skin = tm_wizard_data()->get_first_skin();
+			}
+
+			if ( false !== $skin && tm_wizard_data()->is_single_type_skin( $skin['skin'] ) ) {
+				$redirect = tm_wizard()->get_page_link(
+					array( 'step' => 'configure-plugins', 'skin' => $skin['skin'], 'type' => 'full' )
+				);
+			}
+
+			if ( false !== $skin && ! tm_wizard_data()->is_single_type_skin( $skin['skin'] ) ) {
+				$redirect = tm_wizard()->get_page_link(
+					array( 'step' => 2, 'skin' => $skin['skin'] )
+				);
+			}
+
+			return $redirect;
 		}
 
 		/**

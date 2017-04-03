@@ -271,6 +271,29 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		}
 
 		/**
+		 * Returns first skin data
+		 *
+		 * @return array
+		 */
+		public function get_first_skin() {
+
+			$skins = tm_wizard_settings()->get( array( 'skins', 'advanced' ) );
+			$skins = array_slice( $skins, 0, 1 );
+
+			if ( empty( $skins ) ) {
+				return false;
+			}
+
+			$keys = array_keys( $skins );
+			$data = array_values( $skins );
+
+			return array(
+				'skin' => $keys[0],
+				'data' => $data[0],
+			);
+		}
+
+		/**
 		 * Returns true if passed skin has only full installation type.
 		 *
 		 * @param  string  $skin Skin slug.
