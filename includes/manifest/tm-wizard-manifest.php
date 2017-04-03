@@ -40,3 +40,12 @@ $skins = array(
 		),
 	),
 );
+
+/**
+ * Default plugin texts
+ *
+ * @var array
+ */
+$texts = array(
+	'theme-name' => 'Monstroid&sup2;'
+);
