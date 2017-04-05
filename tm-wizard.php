@@ -105,6 +105,7 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		 */
 		public function preload() {
 			require_once $this->path( 'includes/class-tm-wizard-settings.php' );
+			require_once $this->path( 'includes/class-tm-wizard-data.php' );
 			require_once $this->path( 'includes/class-tm-wizard-extensions.php' );
 		}
 
@@ -280,7 +281,6 @@ if ( ! class_exists( 'TM_Wizard' ) ) {
 		public function load() {
 			require_once $this->path( 'includes/class-tm-wizard-interface.php' );
 			require_once $this->path( 'includes/class-tm-wizard-installer.php' );
-			require_once $this->path( 'includes/class-tm-wizard-data.php' );
 		}
 
 		/**

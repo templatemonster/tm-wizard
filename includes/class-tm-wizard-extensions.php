@@ -37,15 +37,35 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_tribe_redirect' ) );
 			add_action( 'tm_wizard_after_plugin_activation', array( $this, 'prevent_woo_redirect' ) );
 
+			add_action( 'tm_wizard_install_finished', array( $this, 'ensure_prevent_booked_redirect' ) );
+
+			if ( tm_wizard()->is_wizard( 4 ) ) {
+				add_action( 'tm_wizard_page_after', array( $this, 'ensure_prevent_booked_redirect' ) );
+			}
+
 			add_filter( 'tm_wizard_send_install_data', array( $this, 'add_multi_arg' ), 10, 2 );
 
-			add_filter( 'ttw_success_redirect_url', array( $this, 'set_theme_wizard_success_redirect' ) );
+			if ( tm_wizard_settings()->get_manifest() ) {
+				add_filter( 'ttw_success_redirect_url', array( $this, 'set_theme_wizard_success_redirect' ) );
+			}
 
 			add_action( 'tm_dashboard_add_section', array( $this, 'add_dashboard_plugins_section' ), 25, 2 );
 			add_action( 'admin_head', array( $this, 'maybe_print_dashboard_css' ), 99 );
 
 			// Booked somitemes not processed correctly and still redirect so pervent it hard
 			add_filter( 'pre_transient__booked_welcome_screen_activation_redirect', array( $this, 'hard_prevent_booked_redirect' ), 10, 2 );
+		}
+
+		/**
+		 * Ensure that we prevent booked plugin redirect
+		 *
+		 * @return void
+		 */
+		public function ensure_prevent_booked_redirect() {
+
+			delete_transient( '_booked_welcome_screen_activation_redirect' );
+			update_option( 'booked_welcome_screen', false );
+
 		}
 
 		/**
@@ -85,16 +105,7 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 		 * @return mixed
 		 */
 		public function hard_prevent_booked_redirect( $pre, $value ) {
-
-			if ( isset( $_REQUEST['action'] ) && 'tm_wizard_install_plugin' === $_REQUEST['action'] ) {
-				return null;
-			}
-
-			if ( isset( $_GET['page'] ) && tm_wizard()->slug() === $_GET['page'] ) {
-				return null;
-			}
-
-			return $pre;
+			return null;
 		}
 
 		/**
@@ -253,6 +264,7 @@ if ( ! class_exists( 'TM_Wizard_Extensions' ) ) {
 			}
 
 			delete_transient( '_booked_welcome_screen_activation_redirect' );
+			update_option( 'booked_welcome_screen', false );
 
 			return true;
 		}

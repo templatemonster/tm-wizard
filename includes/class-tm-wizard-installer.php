@@ -122,6 +122,8 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 				delete_option( tm_wizard_data()->advances_plugins );
 				add_option( 'tm_active_skin', array( 'skin' => $skin, 'type' => $type ), '', false );
 
+				do_action( 'tm_wizard_install_finished' );
+
 				$data = array(
 					'isLast'     => true,
 					'message'    => sprintf( '<div class="tm-wizard-installed">%s</div>', $message ),

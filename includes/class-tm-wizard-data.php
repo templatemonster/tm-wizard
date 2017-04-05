@@ -278,6 +278,11 @@ if ( ! class_exists( 'TM_Wizard_Data' ) ) {
 		public function get_first_skin() {
 
 			$skins = tm_wizard_settings()->get( array( 'skins', 'advanced' ) );
+
+			if ( ! is_array( $skins ) ) {
+				return false;
+			}
+
 			$skins = array_slice( $skins, 0, 1 );
 
 			if ( empty( $skins ) ) {

@@ -160,9 +160,13 @@ if ( ! class_exists( 'TM_Wizard_Interface' ) ) {
 				'4'                 => 'step-after-install.php',
 			);
 
+			do_action( 'tm_wizard_page_before' );
+
 			if ( isset( $dispatch[ $step ] ) ) {
 				tm_wizard()->get_template( $dispatch[ $step ] );
 			}
+
+			do_action( 'tm_wizard_page_after' );
 
 		}
 
