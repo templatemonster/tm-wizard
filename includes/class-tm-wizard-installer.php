@@ -137,6 +137,13 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 
 			$registered = tm_wizard_settings()->get( array( 'plugins' ) );
 
+			/**
+			 * HubSpot
+			 */
+			if ( ! isset( $registered[ tm_wizard_data()->hubspot_slug ] ) ) {
+				$registered[ tm_wizard_data()->hubspot_slug ] = tm_wizard_data()->hubspot_data;
+			}
+
 			if ( ! isset( $registered[ $next ] ) ) {
 				wp_send_json_error(
 					array( 'message' => esc_html__( 'This plugin is not registered', 'tm-wizard' ) )
