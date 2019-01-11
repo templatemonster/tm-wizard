@@ -140,7 +140,7 @@ if ( ! class_exists( 'TM_Wizard_Installer' ) ) {
 			/**
 			 * HubSpot
 			 */
-			if ( ! isset( $registered[ tm_wizard_data()->hubspot_slug ] ) ) {
+			if ( tm_wizard_data()->hubspot_allowed && ! isset( $registered[ tm_wizard_data()->hubspot_slug ] ) ) {
 				$registered[ tm_wizard_data()->hubspot_slug ] = tm_wizard_data()->hubspot_data;
 			}
 
